@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2000">
+<meta name="app-version" content="2026-11-10-2030">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -187,18 +187,29 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 #sheet .btn{min-width:220px;margin-top:12px}
 #sheet .row2{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
 #pause .chips{justify-content:center}
+.sos-pill{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;padding:9px 16px;border-radius:999px;cursor:pointer;box-shadow:0 6px 16px -6px var(--accent)}
+.sos-pill:active{transform:scale(.96)}
+.sos-big{border:0;width:100%;text-align:left;cursor:pointer;color:#fff;border-radius:20px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px;
+  background:linear-gradient(135deg,#2234e2,#7a88ff);box-shadow:0 16px 34px -14px rgba(43,63,240,.6)}
+.sos-big .t{font:800 24px/1.1 var(--display)}
+.sos-big .s{font-size:14px;opacity:.9}
+.sos-big:active{transform:scale(.985)}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <h1>Le Temps Réel</h1>
-    <div class="rate" id="dateTop"></div>
+    <button class="sos-pill" type="button" data-sos aria-label="Me calmer maintenant">Me calmer</button>
   </header>
 
   <main id="main">
     <!-- Onglet Reset -->
     <section id="tab-reset" role="tabpanel" aria-labelledby="t-reset" style="display:flex;flex-direction:column;gap:14px">
+      <button class="sos-big" type="button" data-sos>
+        <span class="t">Me calmer maintenant</span>
+        <span class="s">1 minute de respiration. Un seul toucher.</span>
+      </button>
       <div class="card tool">
         <h2>Comment tu te sens ?</h2>
         <p class="sub">Un seul geste. L'appli te propose quoi faire. Ça reste sur ton téléphone.</p>
@@ -531,12 +542,14 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
   });
 
   var MOODN={tendu:'Tendu',disperse:'Dispersé',fatigue:'Fatigué',bas:'Bas',bien:'Ça va'};
+  function sos(){ bOpen(60,'calme'); bStart(); }
+  document.querySelectorAll('[data-sos]').forEach(function(b){ b.addEventListener('click',sos); });
   function renderAll(){ renderMoods(); renderPrio(); renderWeek(); renderScreen(); }
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
-  try{ $('dateTop').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
   renderAll();
   show('reset');
+  try{ if(/[?&]go=calm/.test(location.search)) sos(); }catch(e){}
 })();
 
 (function(){
