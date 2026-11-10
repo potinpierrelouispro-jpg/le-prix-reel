@@ -91,12 +91,17 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-#installBar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
+#installBar{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
 #installBar b{display:block;font-size:16px;margin-bottom:4px}
 #installBar .row{display:flex;gap:8px;margin-top:10px}
 #installBar button{flex:1;border:0;border-radius:10px;padding:10px;font-size:15px;font-weight:600;cursor:pointer}
 #installBar .go{background:#fff;color:#2b3ff0}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
+#onb{position:fixed;inset:0;z-index:60;background:var(--bg);display:none;overflow-y:auto}
+#onb .in{max-width:480px;margin:0 auto;padding:40px 20px 30px}
+#onb h2{font:800 30px/1.1 var(--display);margin:0 0 10px}
+#onb p{color:var(--mute);margin:0 0 20px}
+#onb .btn{width:100%;margin-top:10px}
 </style>
 </head>
 <body>
@@ -126,6 +131,7 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
           <button class="btn primary" id="btnSpend" type="button">Je le dépense</button>
           <button class="btn" id="btnWait" type="button">Me le rappeler dans 48 h</button>
           <button class="btn ghost" id="btnSkip" type="button">Je laisse de côté</button>
+          <button class="btn ghost" id="btnImg" type="button">Partager ce résultat en image</button>
         </div>
         <p class="help" id="gamingHelp" hidden>Besoin d'en parler ? Joueurs Info Service : <a href="tel:0974751313">09 74 75 13 13</a> (service national d'aide, appel non surtaxé).</p>
       </div>
@@ -192,6 +198,20 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
 </div>
 
 
+<div id="onb" role="dialog" aria-modal="true" aria-label="Bienvenue">
+  <div class="in">
+    <h2>Combien vaut ton heure ?</h2>
+    <p>Le Prix Réel traduit un prix en heures de travail. Pour ça, il a besoin de deux chiffres. Ils restent sur ton téléphone.</p>
+    <label for="onbNet">Salaire net par mois (€)</label>
+    <input id="onbNet" type="text" inputmode="decimal" autocomplete="off" placeholder="1000">
+    <label for="onbHrs" style="margin-top:14px">Heures travaillées par mois</label>
+    <input id="onbHrs" type="text" inputmode="decimal" autocomplete="off" value="151,67">
+    <p class="help">35 h par semaine, c'est environ 152 h par mois. Compte seulement le temps en entreprise.</p>
+    <p class="eq" style="margin:14px 0 0"><b id="onbRate"></b></p>
+    <button class="btn primary" id="onbGo" type="button">Commencer</button>
+    <button class="btn ghost" id="onbSkip" type="button">Passer pour l'instant</button>
+  </div>
+</div>
 <div id="installBar" role="dialog" aria-label="Installer l'appli">
   <b>Installer Le Prix Réel</b>
   <div id="installMsg"></div>
@@ -217,7 +237,7 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
       wishes:[{id:7,label:'Casque audio',cat:'Plaisir',amt:129,due:n+30*3600000,ex:1}]};
   }
   function load(){
-    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log) return o;}}catch(e){}
+    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log){o.onboarded=true; return o;}}}catch(e){}
     return seed();
   }
   function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
@@ -257,7 +277,7 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
     var a=num($('amount').value), ok=a>0 && rate()>0;
     $('bigHours').textContent = ok ? fmtH(toHours(a)) : '—';
     $('eqText').textContent = ok ? eqText(toHours(a)) : (rate()>0 ? 'Entre un prix pour voir ce que ça représente.' : 'Renseigne ton salaire dans Réglages.');
-    ['btnSpend','btnWait','btnSkip'].forEach(function(id){ $(id).disabled=!ok; $(id).style.opacity=ok?1:.5; });
+    ['btnSpend','btnWait','btnSkip','btnImg'].forEach(function(id){ $(id).disabled=!ok; $(id).style.opacity=ok?1:.5; });
     $('gamingHelp').hidden = cat!=='Jeux d\'argent';
   }
   function currentItem(){
@@ -384,10 +404,54 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
     catch(e){ copy(); }
   });
 
+  /* ---- Partage en image (pour Instagram) ---- */
+  function makeImage(cb){
+    var a=num($('amount').value); if(!(a>0)||!(rate()>0)) return;
+    var h=toHours(a), what=$('what').value.trim()||cat;
+    var W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H;
+    var x=c.getContext('2d'), F='"Bricolage Grotesque","Arial Narrow",Arial,sans-serif';
+    x.fillStyle='#2b3ff0'; x.fillRect(0,0,W,H);
+    x.fillStyle='#fff'; x.textAlign='left'; x.textBaseline='alphabetic';
+    x.font='800 44px '+F; x.fillText('Le Prix Réel',80,130);
+    function fit(t,size,max){ x.font='800 '+size+'px '+F; while(x.measureText(t).width>max&&size>30){ size-=4; x.font='800 '+size+'px '+F; } }
+    x.globalAlpha=.85; fit(what,56,W-160); x.fillText(what,80,430);
+    x.font='600 44px '+F; x.fillText(euro(a)+' =',80,500); x.globalAlpha=1;
+    var big=fmtH(h); fit(big,260,W-160); x.fillText(big,80,760);
+    x.font='600 52px '+F; x.fillText('de travail',80,840);
+    x.globalAlpha=.85; x.font='600 40px '+F; x.fillText(eqText(h).replace(/ \(.*\)$/,''),80,920); x.globalAlpha=1;
+    x.font='600 38px '+F; x.fillText('Et toi, ça te coûte combien d\u2019heures ?',80,1180);
+    x.globalAlpha=.8; x.font='500 34px '+F; x.fillText(location.host,80,1240); x.globalAlpha=1;
+    c.toBlob(function(b){ cb(b,big); },'image/png');
+  }
+  $('btnImg').addEventListener('click',function(){
+    makeImage(function(blob,big){
+      if(!blob){ toast('Image impossible sur cet appareil.'); return; }
+      var f; try{ f=new File([blob],'prix-reel.png',{type:'image/png'}); }catch(e){}
+      if(f&&navigator.canShare&&navigator.canShare({files:[f]})){
+        navigator.share({files:[f]}).catch(function(){});
+      }else{
+        var u=URL.createObjectURL(blob), l=document.createElement('a'); l.href=u; l.download='prix-reel.png'; document.body.appendChild(l); l.click(); l.remove();
+        setTimeout(function(){URL.revokeObjectURL(u);},4000); toast('Image enregistrée.');
+      }
+    });
+  });
+
+  /* ---- Première ouverture ---- */
+  function onbRender(){ var n=num($('onbNet').value),h=num($('onbHrs').value); $('onbRate').textContent=(n>0&&h>0)?'Ton heure de travail vaut '+euro(n/h)+'.':''; }
+  $('onbNet').addEventListener('input',onbRender); $('onbHrs').addEventListener('input',onbRender);
+  function onbClose(){ state.onboarded=true; save(); $('onb').style.display='none'; renderAll(); }
+  $('onbGo').addEventListener('click',function(){
+    var n=num($('onbNet').value),h=num($('onbHrs').value);
+    if(!(n>0)){ toast('Entre ton salaire net par mois.'); return; }
+    state.net=n; if(h>0) state.hours=h; onbClose();
+  });
+  $('onbSkip').addEventListener('click',onbClose);
+
   state=load();
   renderCats();
   renderAll();
   show('calc');
+  if(!state.onboarded){ $('onb').style.display='block'; }
 })();
 
 (function(){
