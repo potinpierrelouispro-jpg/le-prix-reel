@@ -90,6 +90,13 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
 .note{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);display:flex;gap:10px;align-items:center;justify-content:space-between}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#installBar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
+#installBar b{display:block;font-size:16px;margin-bottom:4px}
+#installBar .row{display:flex;gap:8px;margin-top:10px}
+#installBar button{flex:1;border:0;border-radius:10px;padding:10px;font-size:15px;font-weight:600;cursor:pointer}
+#installBar .go{background:#fff;color:#2b3ff0}
+#installBar .no{background:rgba(255,255,255,.18);color:#fff}
 </style>
 </head>
 <body>
@@ -184,6 +191,12 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
   <div class="toast" id="toast" role="status"></div>
 </div>
 
+
+<div id="installBar" role="dialog" aria-label="Installer l'appli">
+  <b>Installer Le Prix Réel</b>
+  <div id="installMsg"></div>
+  <div class="row"><button class="go" id="installGo" type="button">Installer</button><button class="no" id="installNo" type="button">Plus tard</button></div>
+</div>
 <script>
 (function(){
   var KEY='prixreel.v1', DAY=86400000, WORKDAY=7;
@@ -375,6 +388,35 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
   renderCats();
   renderAll();
   show('calc');
+})();
+
+(function(){
+  var bar=document.getElementById('installBar'),msg=document.getElementById('installMsg'),go=document.getElementById('installGo'),no=document.getElementById('installNo');
+  var KEY='prixreel.installDismissed',deferred=null;
+  function dismissed(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
+  function standalone(){return window.navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)}
+  function hide(){bar.style.display='none'}
+  no.addEventListener('click',function(){hide();try{localStorage.setItem(KEY,'1')}catch(e){}});
+  if(standalone()||dismissed())return;
+  var ua=navigator.userAgent,isIOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(isIOS){
+    msg.innerHTML='Touche le bouton <b style="display:inline">Partager</b> (le carré avec la flèche, en bas de Safari), puis <b style="display:inline">Sur l\u2019écran d\u2019accueil</b>.';
+    go.textContent='Compris';
+    go.addEventListener('click',function(){hide();try{localStorage.setItem(KEY,'1')}catch(e){}});
+    setTimeout(function(){bar.style.display='block'},1200);
+  }else{
+    window.addEventListener('beforeinstallprompt',function(e){
+      e.preventDefault();deferred=e;
+      msg.textContent='Ajoute l\u2019appli à ton écran d\u2019accueil pour l\u2019ouvrir en un geste.';
+      bar.style.display='block';
+    });
+    go.addEventListener('click',function(){
+      if(!deferred)return;
+      deferred.prompt();
+      deferred.userChoice.then(function(){deferred=null;hide()});
+    });
+    window.addEventListener('appinstalled',hide);
+  }
 })();
 </script>
 </body>
