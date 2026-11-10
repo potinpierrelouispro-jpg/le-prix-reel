@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2100">
+<meta name="app-version" content="2026-11-10-2130">
 
 <style>
 /* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
@@ -268,20 +268,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
         <span class="s">1 minute de respiration. Un seul toucher.</span>
       </button>
       <div class="card tool">
-        <h2>Comment tu te sens ?</h2>
-        <p class="sub">Un seul geste. L'appli te propose quoi faire. Ça reste sur ton téléphone.</p>
-        <div class="moods" id="moods" role="group" aria-label="Humeur">
-          <button type="button" data-m="tendu"><span>😤</span>Tendu</button>
-          <button type="button" data-m="disperse"><span>😵‍💫</span>Dispersé</button>
-          <button type="button" data-m="fatigue"><span>😴</span>Fatigué</button>
-          <button type="button" data-m="bas"><span>😔</span>Bas</button>
-          <button type="button" data-m="bien"><span>🙂</span>Ça va</button>
-        </div>
-        <div class="out" id="moodOut" hidden></div>
-        <p class="help" id="moodWeek"></p>
-      </div>
-
-      <div class="card tool">
         <h2>Respirer</h2>
         <p class="sub">Un cercle à suivre. Choisis la durée.</p>
         <button class="btn primary sh" type="button" data-breath="60" style="margin-top:0">1 minute</button>
@@ -306,18 +292,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
         <button class="btn sh" type="button" data-tool="focus" style="margin-top:0">Lancer un minuteur</button>
       </div>
 
-      <div class="card tool">
-        <h2>Ta priorité du jour</h2>
-        <p class="sub">Une seule chose qui compte aujourd'hui.</p>
-        <input id="prio" type="text" autocomplete="off" placeholder="Ex : finir mon dossier">
-        <div class="out" id="prioOut" hidden></div>
-        <button class="btn sh" type="button" id="prioBtn">Valider</button>
-      </div>
-      <div class="card" id="helpCard">
-        <h2>Besoin d'en parler ?</h2>
-        <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
-        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans, tous les jours de 9 h à 23 h) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> (tous les jours de 8 h à 2 h) : <a href="tel:0974751313">09 74 75 13 13</a></p>
-      </div>
     </section>
 
     <!-- Onglet Écran -->
@@ -344,7 +318,7 @@ nav button[aria-selected="true"]{color:var(--accent)}
         <details class="tip"><summary>Le téléphone dans une autre pièce</summary><p>Le laisser hors de vue pendant que tu travailles aide à rester concentré. Tu le retrouves à la pause.</p></details>
         <details class="tip"><summary>Avant de dormir</summary><p>Éviter les écrans juste avant de se coucher aide souvent à mieux s'endormir. Un exercice de respiration peut les remplacer.</p></details>
         <details class="tip"><summary>Comparer sur les réseaux</summary><p>Sur les réseaux, on voit les meilleurs moments des autres, pas leur quotidien. Si tu te sens mal après avoir scrollé, c'est le moment d'une pause.</p></details>
-        <details class="tip"><summary>En parler à quelqu'un</summary><p>Parler à un proche, à un professionnel de ton école ou de ton CFA, ou à une ligne d'écoute gratuite aide souvent plus qu'on ne le pense. Les numéros sont dans l'onglet Reset.</p></details>
+        <details class="tip"><summary>En parler à quelqu'un</summary><p>Parler à un proche, à un professionnel de ton école ou de ton CFA, ou à une ligne d'écoute gratuite aide souvent plus qu'on ne le pense. Les numéros sont dans Réglages.</p></details>
       </div>
     </section>
 
@@ -356,13 +330,9 @@ nav button[aria-selected="true"]{color:var(--accent)}
           <div class="tile"><div class="v" id="wkBreath">0</div><div class="k">pauses de respiration</div></div>
           <div class="tile"><div class="v" id="wkFocus">0 min</div><div class="k">de concentration</div></div>
           <div class="tile"><div class="v" id="wkGround">0</div><div class="k">retours ici et maintenant</div></div>
-          <div class="tile"><div class="v" id="wkPrio">0</div><div class="k">priorités faites</div></div>
+          <div class="tile"><div class="v" id="wkDump">0</div><div class="k">têtes vidées</div></div>
         </div>
         <p class="help" id="wkMsg"></p>
-      </div>
-      <div class="card">
-        <h2>Tes humeurs</h2>
-        <div class="bars" id="moodBars"></div>
       </div>
     </section>
 
@@ -375,12 +345,17 @@ nav button[aria-selected="true"]{color:var(--accent)}
       </div>
       <div class="card">
         <h2>Tes données</h2>
-        <p class="help" style="margin-top:0">Tes humeurs, ta priorité et tes statistiques restent sur ton téléphone. Tu peux tout effacer.</p>
+        <p class="help" style="margin-top:0">Tes statistiques restent sur ton téléphone. Tu peux tout effacer.</p>
         <button class="btn" id="btnWipe" type="button" style="width:100%;margin-top:12px">Effacer mes données</button>
+      </div>
+      <div class="card" id="helpCard">
+        <h2>Numéros utiles</h2>
+        <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
+        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans, tous les jours de 9 h à 23 h) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> (tous les jours de 8 h à 2 h) : <a href="tel:0974751313">09 74 75 13 13</a></p>
       </div>
       <div class="card">
         <h2>À propos</h2>
-        <p class="help" style="margin-top:0">Le Temps Réel est un petit outil pour faire une pause et se réinitialiser la tête. Il ne remplace pas un professionnel de santé. Si ça ne va pas, les numéros d'aide sont dans l'onglet Reset.</p>
+        <p class="help" style="margin-top:0">Le Temps Réel est un petit outil pour faire une pause et se réinitialiser la tête. Il ne remplace pas un professionnel de santé. Si ça ne va pas, les numéros utiles sont juste au-dessus.</p>
         <p class="help" id="ver"></p>
       </div>
     </section>
@@ -492,59 +467,13 @@ nav button[aria-selected="true"]{color:var(--accent)}
   }
   document.querySelectorAll('[data-tool]').forEach(function(b){ b.addEventListener('click',function(){ var k=b.dataset.tool; if(k==='dump')toolDump(); else if(k==='ground')toolGround(); else toolFocus(); }); });
 
-  /* ---- Humeur et priorité ---- */
-  var MOOD={
-    tendu:{e:'😤',t:'Ça aide souvent de ralentir le souffle.',a:[['Respirer 1 minute',function(){bOpen(60,'calme');}]]},
-    disperse:{e:'😵‍💫',t:'Une seule chose à la fois. Sors d’abord ce qui tourne, puis concentre-toi.',a:[['Vider ma tête',toolDump],['Me concentrer 10 min',function(){toolFocus(10);}]]},
-    fatigue:{e:'😴',t:'Une courte pause peut suffire. Si possible, loin de l’écran.',a:[['Respirer 3 minutes',function(){bOpen(180,'calme');}]]},
-    bas:{e:'😔',t:'Merci de t’être arrêté un instant. Tu peux essayer l’exercice qui ramène ici et maintenant, et en parler à quelqu’un si tu en ressens le besoin.',a:[['Revenir ici et maintenant',toolGround],['Voir les numéros d’aide',function(){ var h=$('helpCard'); if(h) h.scrollIntoView({behavior:'smooth',block:'start'}); }]]},
-    bien:{e:'🙂',t:'Profites-en pour choisir ta priorité du jour.',a:[['Choisir ma priorité',function(){ var i=$('prio'); i.scrollIntoView({behavior:'smooth',block:'center'}); i.focus(); }]]}
-  };
-  function today(){ var d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-  function renderMoods(){
-    var since=Date.now()-7*DAY, c={}; (state.moods||[]).forEach(function(m){ if(m.t>=since) c[m.m]=(c[m.m]||0)+1; });
-    var parts=Object.keys(MOOD).filter(function(k){return c[k];}).map(function(k){return MOOD[k].e+' '+c[k];});
-    $('moodWeek').textContent=parts.length?'Cette semaine : '+parts.join(' · '):'';
-  }
-  document.querySelectorAll('#moods [data-m]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var k=b.dataset.m, M=MOOD[k];
-      document.querySelectorAll('#moods [data-m]').forEach(function(x){ x.setAttribute('aria-pressed',x===b?'true':'false'); });
-      state.moods=(state.moods||[]).concat([{t:Date.now(),m:k}]).slice(-60); save(); renderMoods();
-      var out=$('moodOut'); out.hidden=false; out.innerHTML=''; var p=document.createElement('div'); p.textContent=M.t; out.appendChild(p);
-      M.a.forEach(function(a){ var bt=document.createElement('button'); bt.type='button'; bt.className='btn'; bt.textContent=a[0]; bt.addEventListener('click',a[1]); out.appendChild(bt); });
-    });
-  });
-  function renderPrio(){
-    var pr=state.prio, out=$('prioOut'), ok=pr&&pr.d===today()&&pr.txt;
-    if(ok){ out.hidden=false; out.innerHTML='<b>'+esc(pr.txt)+'</b>'+(pr.done?'Fait. Bien joué.':'Ta priorité aujourd’hui.'); $('prioBtn').textContent=pr.done?'Changer':'C’est fait'; $('prio').value=''; }
-    else { out.hidden=true; $('prioBtn').textContent='Valider'; }
-  }
-  $('prioBtn').addEventListener('click',function(){
-    var pr=state.prio, v=$('prio').value.trim();
-    if(v){ state.prio={d:today(),txt:v,done:false}; }
-    else if(pr&&pr.d===today()&&pr.txt){ if(pr.done) state.prio=null; else { pr.done=true; logEv('prio',1); } }
-    else { toast('Écris ta priorité du jour.'); return; }
-    save(); renderPrio();
-  });
-
-
   /* ---- Semaine ---- */
   function renderWeek(){
     var since=Date.now()-7*DAY, ev=(state.ev||[]).filter(function(e){return e.t>=since;});
     function cnt(k){ return ev.filter(function(e){return e.k===k;}).length; }
     var focus=ev.filter(function(e){return e.k==='focus';}).reduce(function(s,e){return s+e.v;},0);
-    $('wkBreath').textContent=cnt('breath'); $('wkFocus').textContent=nf(focus)+' min'; $('wkGround').textContent=cnt('ground'); $('wkPrio').textContent=cnt('prio');
+    $('wkBreath').textContent=cnt('breath'); $('wkFocus').textContent=nf(focus)+' min'; $('wkGround').textContent=cnt('ground'); $('wkDump').textContent=cnt('dump');
     $('wkMsg').textContent = ev.length ? '' : 'Rien pour l\u2019instant. Fais une pause dans l\u2019onglet Reset et elle apparaîtra ici.';
-    var c={}, tot=0; (state.moods||[]).forEach(function(m){ if(m.t>=since){ c[m.m]=(c[m.m]||0)+1; tot++; } });
-    var box=$('moodBars'); box.innerHTML='';
-    var max=Math.max.apply(null,Object.keys(MOOD).map(function(k){return c[k]||0;}).concat([1]));
-    Object.keys(MOOD).forEach(function(k){
-      if(!c[k]) return; var d=document.createElement('div'); d.className='bar';
-      d.innerHTML='<div class="top"><span>'+MOOD[k].e+' '+esc(MOODN[k])+'</span><span>'+c[k]+'</span></div><div class="track"><div class="fill" style="width:'+Math.max(6,c[k]/max*100)+'%"></div></div>';
-      box.appendChild(d);
-    });
-    if(!tot) box.innerHTML='<p class="empty">Aucune humeur notée cette semaine.</p>';
   }
 
   /* ---- Écran ---- */
@@ -598,10 +527,9 @@ nav button[aria-selected="true"]{color:var(--accent)}
     state=load(); renderAll(); toast('Données effacées.');
   });
 
-  var MOODN={tendu:'Tendu',disperse:'Dispersé',fatigue:'Fatigué',bas:'Bas',bien:'Ça va'};
   function sos(){ bOpen(60,'calme'); bStart(); }
   document.querySelectorAll('[data-sos]').forEach(function(b){ b.addEventListener('click',sos); });
-  function renderAll(){ renderMoods(); renderPrio(); renderWeek(); renderScreen(); }
+  function renderAll(){ renderWeek(); renderScreen(); }
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
   renderAll();
