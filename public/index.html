@@ -50,14 +50,14 @@ body{background:
   background-attachment:fixed}
 .card{box-shadow:0 1px 2px rgba(20,32,43,.04),0 10px 28px -14px rgba(43,63,240,.22)}
 .result{box-shadow:0 14px 34px -16px rgba(43,63,240,.35)}
-nav{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:color-mix(in srgb,var(--card) 88%,transparent)}
+
 button,input{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column}
 header{padding:18px 16px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 h1{font:800 22px/1 var(--display);margin:0;letter-spacing:-.01em}
 .rate{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
-main{flex:1;overflow-y:auto;padding:8px 16px 20px;display:flex;flex-direction:column;gap:14px}
+main{flex:1;overflow-y:auto;padding:8px 16px calc(112px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
 label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:6px}
 input[type=text],input[type=number],input[type=search]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:18px;font-variant-numeric:tabular-nums}
@@ -93,16 +93,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 .tile .v{font:800 26px/1.1 var(--display);font-variant-numeric:tabular-nums}
 .tile .k{font-size:13px;color:var(--mute)}
 .empty{color:var(--mute);font-size:14px;margin:0}
-nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--card);padding-bottom:env(safe-area-inset-bottom,0)}
-nav button{border:0;background:transparent;padding:14px 4px;font-weight:600;color:var(--mute);cursor:pointer}
-nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
-.toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+.toast{position:fixed;left:50%;bottom:calc(98px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
 .toast.on{opacity:1}
 .note{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);display:flex;gap:10px;align-items:center;justify-content:space-between}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-#installBar{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
+#installBar{position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
 #installBar b{display:block;font-size:16px;margin-bottom:4px}
 #installBar .row{display:flex;gap:8px;margin-top:10px}
 #installBar button{flex:1;border:0;border-radius:10px;padding:10px;font-size:15px;font-weight:600;cursor:pointer}
@@ -113,6 +110,28 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
 #onb h2{font:800 30px/1.1 var(--display);margin:0 0 10px}
 #onb p{color:var(--mute);margin:0 0 20px}
 #onb .btn{width:100%;margin-top:10px}
+/* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
+nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;border-radius:30px;
+  background:color-mix(in srgb,var(--card) 62%,transparent);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid color-mix(in srgb,#fff 55%,transparent);
+  box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
+:root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/3);border-radius:24px;
+  background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
+  transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
+nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 4px 8px;color:var(--mute);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:600;transition:color .25s}
+nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.34,1.5,.5,1)}
+nav button[aria-selected="true"]{color:var(--accent)}
+nav button[aria-selected="true"] svg{transform:scale(1.12)}
+nav button:active svg{transform:scale(.9)}
+@keyframes enterR{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes enterL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+main section.enter-r{animation:enterR .38s cubic-bezier(.22,1,.36,1)}
+main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
+@media (prefers-reduced-motion:reduce){nav .thumb,nav button,nav button svg{transition:none!important}main section{animation:none!important}}
 </style>
 </head>
 <body>
@@ -201,9 +220,10 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
   </main>
 
   <nav role="tablist" aria-label="Sections">
-    <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button">Calculer</button>
-    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button">Ma semaine</button>
-    <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button">Réglages</button>
+    <span class="thumb" id="thumb" aria-hidden="true"></span>
+    <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>Calculer</button>
+    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Ma semaine</button>
+    <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
   <div class="toast" id="toast" role="status"></div>
 </div>
@@ -396,14 +416,29 @@ nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 va
 
   /* ---- Onglets ---- */
   var tabs=document.querySelectorAll('nav [role=tab]');
+  var ORDER=['calc','week','set'], cur=-1;
   function show(name){
-    ['calc','week','set'].forEach(function(n){
+    var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
+    ORDER.forEach(function(n){
       var p=$('tab-'+n), on=n===name; p.hidden=!on; p.style.display=on?'flex':'none';
+      p.classList.remove('enter-r','enter-l');
+      if(on&&!first&&idx!==cur){ void p.offsetWidth; p.classList.add(dir); }
     });
     tabs.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab===name?'true':'false'); });
-    $('main').scrollTop=0;
+    $('thumb').style.transform='translateX('+(idx*100)+'%)';
+    cur=idx; $('main').scrollTop=0;
   }
   tabs.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.tab); }); });
+  /* Glisser à gauche / à droite pour changer d'onglet */
+  (function(){
+    var x0=0,y0=0,t0=0,m=$('main');
+    m.addEventListener('touchstart',function(e){ var t=e.touches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); },{passive:true});
+    m.addEventListener('touchend',function(e){
+      var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+      if(Date.now()-t0>600||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8) return;
+      var n=cur+(dx<0?1:-1); if(n>=0&&n<ORDER.length) show(ORDER[n]);
+    },{passive:true});
+  })();
 
   $('btnShare').addEventListener('click',function(){
     var url=location.href.split('#')[0], data={title:'Le Prix Réel',text:'Vois ce que tes achats coûtent en heures de travail.',url:url};
