@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2230">
+<meta name="app-version" content="2026-11-10-2240">
 
 <style>
 /* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
@@ -56,7 +56,7 @@ button,input{font:inherit;color:inherit}
 header{padding:18px 16px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 h1{font:800 22px/1 var(--display);margin:0;letter-spacing:-.01em}
 .rate{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
-main{flex:1;overflow-y:auto;padding:8px 16px calc(112px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+main{flex:1;overflow-y:auto;padding:8px 16px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
 label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:6px}
 input[type=text],input[type=number],input[type=search]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:18px;font-variant-numeric:tabular-nums}
@@ -100,13 +100,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 .tile .v{font:800 26px/1.1 var(--display);font-variant-numeric:tabular-nums}
 .tile .k{font-size:13px;color:var(--mute)}
 .empty{color:var(--mute);font-size:14px;margin:0}
-.toast{position:fixed;left:50%;bottom:calc(98px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
 .toast.on{opacity:1}
 .note{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);display:flex;gap:10px;align-items:center;justify-content:space-between}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-#installBar{position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
+#installBar{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;display:none;background:#2b3ff0;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:15px;line-height:1.4}
 #installBar b{display:block;font-size:16px;margin-bottom:4px}
 #installBar .row{display:flex;gap:8px;margin-top:10px}
 #installBar button{flex:1;border:0;border-radius:10px;padding:10px;font-size:15px;font-weight:600;cursor:pointer}
@@ -294,22 +294,9 @@ nav button[aria-selected="true"]{color:var(--accent)}
 
     </section>
 
-    <!-- Onglet Réglages -->
-    <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
-      <div class="card">
-        <h2>Installer et partager</h2>
-        <p class="help" style="margin-top:0"><b>iPhone</b> : ouvre le lien dans Safari, touche Partager, puis « Sur l'écran d'accueil ».<br><b>Android</b> : menu du navigateur, puis « Installer l'application ».</p>
-        <button class="btn primary" id="btnShare" type="button" style="width:100%;margin-top:12px">Partager l'appli</button>
-        <p class="help" id="ver" style="text-align:center;margin-top:14px"></p>
-      </div>
-    </section>
+    <p class="help" id="ver" style="text-align:center;margin:6px 0 0"></p>
   </main>
 
-  <nav role="tablist" aria-label="Sections">
-    <span class="thumb" id="thumb" aria-hidden="true"></span>
-    <button id="t-reset" role="tab" aria-selected="true" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
-    <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
-  </nav>
   <div class="toast" id="toast" role="status"></div>
 </div>
 
@@ -409,44 +396,12 @@ nav button[aria-selected="true"]{color:var(--accent)}
   }
   document.querySelectorAll('[data-tool]').forEach(function(b){ b.addEventListener('click',function(){ var k=b.dataset.tool; if(k==='dump')toolDump(); else if(k==='ground')toolGround(); else toolFocus(); }); });
 
-  /* ---- Onglets ---- */
-  var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['reset','set'], cur=-1;
-  function show(name){
-    var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
-    ORDER.forEach(function(n){
-      var p=$('tab-'+n), on=n===name; p.hidden=!on; p.style.display=on?'flex':'none';
-      p.classList.remove('enter-r','enter-l');
-      if(on&&!first&&idx!==cur){ void p.offsetWidth; p.classList.add(dir); }
-    });
-    tabs.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab===name?'true':'false'); });
-    $('thumb').style.transform='translateX('+(idx*100)+'%)';
-    cur=idx; $('main').scrollTop=0;
-  }
-  tabs.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.tab); }); });
-  (function(){
-    var x0=0,y0=0,t0=0,m=$('main');
-    m.addEventListener('touchstart',function(e){ var t=e.touches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); },{passive:true});
-    m.addEventListener('touchend',function(e){
-      var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
-      if(Date.now()-t0>600||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8) return;
-      var n=cur+(dx<0?1:-1); if(n>=0&&n<ORDER.length) show(ORDER[n]);
-    },{passive:true});
-  })();
-
-  $('btnShare').addEventListener('click',function(){
-    var url=location.href.split('#')[0], data={title:'Le Temps Réel',text:'Une pause pour te réinitialiser la tête.',url:url};
-    function copy(){ try{ navigator.clipboard.writeText(url).then(function(){toast('Lien copié.');},function(){toast(url);}); }catch(e){ toast(url); } }
-    try{ if(navigator.share){ navigator.share(data).catch(function(){}); } else { copy(); } }catch(e){ copy(); }
-  });
-
   function sos(){ bOpen(60,'calme'); bStart(); }
   document.querySelectorAll('[data-sos]').forEach(function(b){ b.addEventListener('click',sos); });
   function renderAll(){}
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
   renderAll();
-  show('reset');
   try{ if(/[?&]go=calm/.test(location.search)) sos(); }catch(e){}
 })();
 
