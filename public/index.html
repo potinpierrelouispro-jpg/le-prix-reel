@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1830">
+<meta name="app-version" content="2026-11-10-1900">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,17 +116,17 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:30px;
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(5,1fr);padding:6px;border-radius:30px;
   background:color-mix(in srgb,var(--card) 62%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,#fff 55%,transparent);
   box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:24px;
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/5);border-radius:24px;
   background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
   transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
-nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 4px 8px;color:var(--mute);cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:600;transition:color .25s}
+nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 2px 8px;color:var(--mute);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;transition:color .25s}
 nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.34,1.5,.5,1)}
 nav button[aria-selected="true"]{color:var(--accent)}
 nav button[aria-selected="true"] svg{transform:scale(1.12)}
@@ -167,6 +167,26 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 #pause .btn{min-width:220px}
 #pause .done{max-width:340px;color:var(--mute);font-size:15px}
 @media (prefers-reduced-motion:reduce){.orb.run{animation:none;transform:scale(.8)}}
+
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.moods button{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 2px 8px;cursor:pointer;font-size:11.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}
+.moods button span{font-size:26px;line-height:1}
+.moods button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.moods button:active{transform:scale(.95)}
+.tool .out .btn{margin-top:10px;width:100%}
+.orb{transition:none}
+#sheet{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;overflow-y:auto;
+  background:radial-gradient(90% 60% at 50% 25%,var(--glow) 0%,transparent 70%),var(--bg)}
+#sheet.on{display:flex}
+#sheet .x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:var(--card);border:1px solid var(--line);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
+#sheet h2{font:800 28px/1.1 var(--display);margin:0 0 8px}
+#sheet .sub{color:var(--mute);margin:0 0 20px;max-width:340px}
+#sheet .big2{font:800 84px/1 var(--display);margin:6px 0;font-variant-numeric:tabular-nums}
+#sheet .step{font:800 26px/1.2 var(--display);max-width:320px;min-height:64px}
+#sheet textarea{width:100%;max-width:420px;min-height:200px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:14px;font-size:17px;resize:vertical;transition:opacity .6s}
+#sheet .btn{min-width:220px;margin-top:12px}
+#sheet .row2{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+#pause .chips{justify-content:center}
 </style>
 </head>
 <body>
@@ -226,15 +246,64 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
       </div>
     </section>
 
-    <!-- Onglet Explorer -->
-    <section id="tab-explore" role="tabpanel" aria-labelledby="t-explore" hidden style="display:flex;flex-direction:column;gap:14px">
+    <!-- Onglet Reset -->
+    <section id="tab-reset" role="tabpanel" aria-labelledby="t-reset" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card tool">
-        <h2>Réinitialiser ta tête</h2>
-        <p class="sub">Une pause guidée pour te calmer avant de décider, ou quand l'écran t'a trop pris.</p>
-        <button class="btn primary sh" type="button" data-pause="60" style="margin-top:0">Pause de 1 minute</button>
-        <button class="btn sh" type="button" data-pause="180">Pause de 3 minutes</button>
+        <h2>Comment tu te sens ?</h2>
+        <p class="sub">Un seul geste. L'appli te propose quoi faire. Ça reste sur ton téléphone.</p>
+        <div class="moods" id="moods" role="group" aria-label="Humeur">
+          <button type="button" data-m="tendu"><span>😤</span>Tendu</button>
+          <button type="button" data-m="disperse"><span>😵‍💫</span>Dispersé</button>
+          <button type="button" data-m="fatigue"><span>😴</span>Fatigué</button>
+          <button type="button" data-m="bas"><span>😔</span>Bas</button>
+          <button type="button" data-m="bien"><span>🙂</span>Ça va</button>
+        </div>
+        <div class="out" id="moodOut" hidden></div>
+        <p class="help" id="moodWeek"></p>
       </div>
 
+      <div class="card tool">
+        <h2>Respirer</h2>
+        <p class="sub">Un cercle à suivre. Choisis la durée.</p>
+        <button class="btn primary sh" type="button" data-breath="60" style="margin-top:0">1 minute</button>
+        <button class="btn sh" type="button" data-breath="180">3 minutes</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Vider ta tête</h2>
+        <p class="sub">Écris tout ce qui tourne. Rien n'est enregistré.</p>
+        <button class="btn sh" type="button" data-tool="dump" style="margin-top:0">Écrire pour vider</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Revenir ici et maintenant</h2>
+        <p class="sub">L'exercice 5-4-3-2-1 : tes sens, un par un.</p>
+        <button class="btn sh" type="button" data-tool="ground" style="margin-top:0">Commencer</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Se concentrer</h2>
+        <p class="sub">Un minuteur, une seule tâche, téléphone posé.</p>
+        <button class="btn sh" type="button" data-tool="focus" style="margin-top:0">Lancer un minuteur</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Ta priorité du jour</h2>
+        <p class="sub">Une seule chose qui compte aujourd'hui.</p>
+        <input id="prio" type="text" autocomplete="off" placeholder="Ex : finir mon dossier">
+        <div class="out" id="prioOut" hidden></div>
+        <button class="btn sh" type="button" id="prioBtn">Valider</button>
+      </div>
+
+      <div class="card" id="helpCard">
+        <h2>Besoin d'en parler ?</h2>
+        <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
+        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans, tous les jours de 9 h à 23 h) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> (tous les jours de 8 h à 2 h) : <a href="tel:0974751313">09 74 75 13 13</a></p>
+      </div>
+    </section>
+
+    <!-- Onglet Explorer -->
+    <section id="tab-explore" role="tabpanel" aria-labelledby="t-explore" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card tool">
         <h2>Ton temps d'écran</h2>
         <p class="sub">Ce que ça fait sur une année.</p>
@@ -282,11 +351,6 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
         <details class="tip"><summary>Parler d'argent avec quelqu'un</summary><p>En cas de doute (banque, crédit, loyer), tu peux poser tes questions à ta banque, à un conseiller de ton école ou de ton CFA, ou au Point Conseil Budget de ta ville : ils sont gratuits.</p></details>
       </div>
 
-      <div class="card">
-        <h2>Besoin d'en parler ?</h2>
-        <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
-        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans, tous les jours de 9 h à 23 h) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> (tous les jours de 8 h à 2 h) : <a href="tel:0974751313">09 74 75 13 13</a></p>
-      </div>
     </section>
 
     <!-- Onglet Semaine -->
@@ -342,8 +406,9 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
   <nav role="tablist" aria-label="Sections">
     <span class="thumb" id="thumb" aria-hidden="true"></span>
     <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>Calculer</button>
+    <button id="t-reset" role="tab" aria-selected="false" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
     <button id="t-explore" role="tab" aria-selected="false" data-tab="explore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explorer</button>
-    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Ma semaine</button>
+    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Semaine</button>
     <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
   <div class="toast" id="toast" role="status"></div>
@@ -353,12 +418,17 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 <div id="pause" role="dialog" aria-modal="true" aria-label="Pause respiration">
   <button class="x" id="pauseX" type="button" aria-label="Fermer">×</button>
   <h2>Pause</h2>
-  <p class="sub" id="pauseSub">Respirer lentement aide souvent à redescendre. Suis le cercle : 5 secondes pour inspirer, 5 pour expirer.</p>
+  <p class="sub" id="pauseSub">Respirer lentement aide souvent à redescendre. Suis le cercle et choisis ton rythme.</p>
+  <div class="chips" id="rhythms" style="margin:0 0 10px"></div>
   <div class="orb-wrap"><div class="orb" id="orb"></div></div>
   <div class="phase" id="pausePhase"></div>
   <div class="time" id="pauseTime"></div>
   <button class="btn primary" id="pauseGo" type="button">Commencer</button>
-  <p class="done" id="pauseDone" hidden>C'est fini. Pour aller plus loin : nomme 5 choses que tu vois, 4 que tu touches, 3 que tu entends, 2 que tu sens, 1 que tu goûtes. Puis reviens à ta décision quand tu veux.</p>
+  <p class="done" id="pauseDone" hidden>C'est fini. Prends un instant avant de passer à la suite. Tu peux aussi essayer « Revenir ici et maintenant » dans l'onglet Reset.</p>
+</div>
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Outil">
+  <button class="x" id="sheetX" type="button" aria-label="Fermer">×</button>
+  <div id="sheetBody"></div>
 </div>
 <div id="installBar" role="dialog" aria-label="Installer l'appli">
   <b>Installer Le Prix Réel</b>
@@ -529,14 +599,14 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   bindSetting('net','net'); bindSetting('hrs','hours');
 
   function renderAll(keepInputs){
-    renderSettings(); renderResult(); renderWishes(); renderWeek(); renderExplore();
+    renderSettings(); renderResult(); renderWishes(); renderWeek(); renderExplore(); if(typeof renderMoods==='function'){ renderMoods(); renderPrio(); }
     if(!keepInputs){ $('net').value=state.net>0?String(state.net).replace('.',','):''; $('hrs').value=String(state.hours).replace('.',','); }
     var rr=$('rateRange'); if(rr){ rr.value=rate(); $('rateRangeVal').textContent=euro(rate()); }
   }
 
   /* ---- Onglets ---- */
   var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['calc','explore','week','set'], cur=-1;
+  var ORDER=['calc','reset','explore','week','set'], cur=-1;
   function show(name){
     var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
     ORDER.forEach(function(n){
@@ -629,29 +699,102 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
     });
   });
 
-  /* ---- Pause respiration ---- */
-  (function(){
-    var box=$('pause'),orb=$('orb'),ph=$('pausePhase'),tm=$('pauseTime'),go=$('pauseGo'),dn=$('pauseDone'),sub=$('pauseSub'),dur=60,timer=null,left=0;
-    function fmt(t){ var m=Math.floor(t/60), r=t%60; return m+':'+(r<10?'0':'')+r; }
-    function stop(){ clearInterval(timer); timer=null; orb.classList.remove('run'); }
-    function open(d){ dur=d; left=d; stop(); dn.hidden=false; dn.hidden=true; sub.hidden=false; ph.textContent=''; tm.textContent=fmt(d); go.textContent='Commencer'; go.hidden=false; box.classList.add('on'); }
-    function close(){ stop(); box.classList.remove('on'); }
-    function finish(){ stop(); ph.textContent='Bien joué.'; tm.textContent=''; dn.hidden=false; sub.hidden=true; go.textContent='Terminer'; go.hidden=false; go.onclick=close; }
-    function start(){
-      go.hidden=true; dn.hidden=true; left=dur; var el=0;
-      orb.classList.remove('run'); void orb.offsetWidth; orb.classList.add('run');
-      ph.textContent='Inspire…'; tm.textContent=fmt(left);
-      timer=setInterval(function(){
-        el++; left--; tm.textContent=fmt(Math.max(left,0));
-        ph.textContent=(Math.floor(el/5)%2===0)?'Inspire…':'Expire…';
-        if(left<=0) finish();
-      },1000);
+  /* ---- Respiration (rythmes) ---- */
+  var RH={calme:{n:'Calme 5-5',p:[['Inspire…',5,1],['Expire…',5,.55]]},carre:{n:'Carré 4-4-4-4',p:[['Inspire…',4,1],['Retiens…',4,1],['Expire…',4,.55],['Retiens…',4,.55]]},r478:{n:'4-7-8',p:[['Inspire…',4,1],['Retiens…',7,1],['Expire…',8,.55]]}};
+  var B={box:$('pause'),orb:$('orb'),ph:$('pausePhase'),tm:$('pauseTime'),go:$('pauseGo'),dn:$('pauseDone'),sub:$('pauseSub'),rh:$('rhythms'),dur:60,rhy:'calme',left:0,clock:null,pt:null,on:false};
+  function fmtT(t){ t=Math.max(0,Math.round(t)); var m=Math.floor(t/60), r=t%60; return m+':'+(r<10?'0':'')+r; }
+  function bStop(){ B.on=false; clearInterval(B.clock); clearTimeout(B.pt); B.orb.style.transition='none'; B.orb.style.transform='scale(.55)'; }
+  function bRhythms(){ B.rh.innerHTML=''; Object.keys(RH).forEach(function(k){ var c=document.createElement('button'); c.type='button'; c.className='chip'; c.textContent=RH[k].n; c.setAttribute('aria-pressed',k===B.rhy?'true':'false'); c.addEventListener('click',function(){ B.rhy=k; bRhythms(); }); B.rh.appendChild(c); }); }
+  function bOpen(d,rhy){ bStop(); B.dur=d; B.left=d; if(rhy) B.rhy=rhy; B.dn.hidden=true; B.sub.hidden=false; B.rh.hidden=false; bRhythms(); B.ph.textContent=''; B.tm.textContent=fmtT(d); B.go.textContent='Commencer'; B.go.onclick=bStart; B.go.hidden=false; B.box.classList.add('on'); }
+  function bClose(){ bStop(); B.box.classList.remove('on'); }
+  function bFinish(){ bStop(); B.ph.textContent='Bien joué.'; B.tm.textContent=''; B.dn.hidden=false; B.sub.hidden=true; B.rh.hidden=true; B.go.textContent='Terminer'; B.go.onclick=bClose; B.go.hidden=false; }
+  function bPhase(i){
+    if(!B.on) return; var P=RH[B.rhy].p, ph=P[i%P.length];
+    B.ph.textContent=ph[0]; B.orb.style.transition='transform '+ph[1]+'s ease-in-out'; B.orb.style.transform='scale('+ph[2]+')';
+    B.pt=setTimeout(function(){ bPhase(i+1); },ph[1]*1000);
+  }
+  function bStart(){
+    B.go.hidden=true; B.dn.hidden=true; B.rh.hidden=true; B.sub.hidden=true; B.left=B.dur; B.on=true; B.tm.textContent=fmtT(B.left);
+    void B.orb.offsetWidth; bPhase(0);
+    B.clock=setInterval(function(){ B.left--; B.tm.textContent=fmtT(B.left); if(B.left<=0) bFinish(); },1000);
+  }
+  $('pauseX').addEventListener('click',bClose);
+  document.querySelectorAll('[data-pause]').forEach(function(b){ b.addEventListener('click',function(){ bOpen(parseInt(b.getAttribute('data-pause'),10),'calme'); }); });
+  document.querySelectorAll('[data-breath]').forEach(function(b){ b.addEventListener('click',function(){ bOpen(parseInt(b.getAttribute('data-breath'),10)); }); });
+
+  /* ---- Outils plein écran : vider, ancrage, focus ---- */
+  var SH={box:$('sheet'),body:$('sheetBody'),clock:null};
+  function shClose(){ clearInterval(SH.clock); SH.clock=null; SH.box.classList.remove('on'); SH.body.innerHTML=''; }
+  $('sheetX').addEventListener('click',shClose);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ shClose(); bClose(); } });
+  function shOpen(html){ SH.body.innerHTML=html; SH.box.classList.add('on'); }
+  function toolDump(){
+    shOpen('<h2>Vider ta tête</h2><p class="sub">Écris tout ce qui tourne : tâches, soucis, idées. Rien n’est enregistré, tout s’efface quand tu fermes.</p><textarea id="dumpTxt" placeholder="Vas-y, écris sans te relire…" aria-label="Zone d’écriture"></textarea><div><button class="btn primary" id="dumpClear" type="button">Tout effacer</button></div>');
+    $('dumpClear').addEventListener('click',function(){ var t=$('dumpTxt'); t.style.opacity='0'; setTimeout(function(){ t.value=''; t.style.opacity='1'; toast('Effacé. Rien n’a été gardé.'); },600); });
+  }
+  function toolGround(){
+    var steps=[['5','choses que tu vois'],['4','choses que tu peux toucher'],['3','choses que tu entends'],['2','choses que tu sens'],['1','chose que tu goûtes']], i=0;
+    function draw(){
+      if(i>=steps.length){ shOpen('<h2>Bien joué</h2><p class="sub">Respire un grand coup. Tu es ici, maintenant.</p><button class="btn primary" id="gEnd" type="button">Terminer</button>'); $('gEnd').addEventListener('click',shClose); return; }
+      shOpen('<p class="sub">Étape '+(i+1)+' sur 5</p><div class="big2">'+steps[i][0]+'</div><div class="step">Nomme '+steps[i][0]+' '+steps[i][1]+'</div><button class="btn primary" id="gNext" type="button">'+(i<4?'Suivant':'Fini')+'</button>');
+      $('gNext').addEventListener('click',function(){ i++; draw(); });
     }
-    go.addEventListener('click',function(){ if(go.textContent==='Commencer') start(); });
-    $('pauseX').addEventListener('click',close);
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
-    document.querySelectorAll('[data-pause]').forEach(function(b){ b.addEventListener('click',function(){ go.onclick=null; open(parseInt(b.getAttribute('data-pause'),10)); }); });
-  })();
+    draw();
+  }
+  function toolFocus(min){
+    if(!min){
+      shOpen('<h2>Se concentrer</h2><p class="sub">Choisis une seule tâche, lance le minuteur, pose ton téléphone face cachée. Reviens quand c’est fini.</p><div class="row2"><button class="chip" data-f="10" type="button">10 min</button><button class="chip" data-f="25" type="button">25 min</button><button class="chip" data-f="45" type="button">45 min</button></div>');
+      SH.body.querySelectorAll('[data-f]').forEach(function(b){ b.addEventListener('click',function(){ toolFocus(parseInt(b.dataset.f,10)); }); });
+      return;
+    }
+    var end=Date.now()+min*60000;
+    shOpen('<p class="sub">Une seule chose. Le reste attend.</p><div class="big2" id="fTime">'+fmtT(min*60)+'</div><button class="btn" id="fStop" type="button">Arrêter</button>');
+    $('fStop').addEventListener('click',shClose);
+    function tick(){
+      var left=Math.round((end-Date.now())/1000), el=$('fTime'); if(!el) return;
+      if(left<=0){ clearInterval(SH.clock); SH.clock=null; shOpen('<h2>Terminé</h2><p class="sub">Bravo. Lève-toi, bois de l’eau, bouge un peu avant de continuer.</p><button class="btn primary" id="fEnd" type="button">Terminer</button>'); $('fEnd').addEventListener('click',shClose); return; }
+      el.textContent=fmtT(left);
+    }
+    SH.clock=setInterval(tick,500);
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden&&SH.clock) tick(); });
+  }
+  document.querySelectorAll('[data-tool]').forEach(function(b){ b.addEventListener('click',function(){ var k=b.dataset.tool; if(k==='dump')toolDump(); else if(k==='ground')toolGround(); else toolFocus(); }); });
+
+  /* ---- Humeur et priorité ---- */
+  var MOOD={
+    tendu:{e:'😤',t:'Ça aide souvent de ralentir le souffle.',a:[['Respirer 1 minute',function(){bOpen(60,'calme');}]]},
+    disperse:{e:'😵‍💫',t:'Une seule chose à la fois. Sors d’abord ce qui tourne, puis concentre-toi.',a:[['Vider ma tête',toolDump],['Me concentrer 10 min',function(){toolFocus(10);}]]},
+    fatigue:{e:'😴',t:'Une courte pause peut suffire. Si possible, loin de l’écran.',a:[['Respirer 3 minutes',function(){bOpen(180,'calme');}]]},
+    bas:{e:'😔',t:'Merci de t’être arrêté un instant. Tu peux essayer l’exercice qui ramène ici et maintenant, et en parler à quelqu’un si tu en ressens le besoin.',a:[['Revenir ici et maintenant',toolGround],['Voir les numéros d’aide',function(){ var h=$('helpCard'); if(h) h.scrollIntoView({behavior:'smooth',block:'start'}); }]]},
+    bien:{e:'🙂',t:'Profites-en pour choisir ta priorité du jour.',a:[['Choisir ma priorité',function(){ var i=$('prio'); i.scrollIntoView({behavior:'smooth',block:'center'}); i.focus(); }]]}
+  };
+  function today(){ var d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  function renderMoods(){
+    var since=Date.now()-7*DAY, c={}; (state.moods||[]).forEach(function(m){ if(m.t>=since) c[m.m]=(c[m.m]||0)+1; });
+    var parts=Object.keys(MOOD).filter(function(k){return c[k];}).map(function(k){return MOOD[k].e+' '+c[k];});
+    $('moodWeek').textContent=parts.length?'Cette semaine : '+parts.join(' · '):'';
+  }
+  document.querySelectorAll('#moods [data-m]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.dataset.m, M=MOOD[k];
+      document.querySelectorAll('#moods [data-m]').forEach(function(x){ x.setAttribute('aria-pressed',x===b?'true':'false'); });
+      state.moods=(state.moods||[]).concat([{t:Date.now(),m:k}]).slice(-60); save(); renderMoods();
+      var out=$('moodOut'); out.hidden=false; out.innerHTML=''; var p=document.createElement('div'); p.textContent=M.t; out.appendChild(p);
+      M.a.forEach(function(a){ var bt=document.createElement('button'); bt.type='button'; bt.className='btn'; bt.textContent=a[0]; bt.addEventListener('click',a[1]); out.appendChild(bt); });
+    });
+  });
+  function renderPrio(){
+    var pr=state.prio, out=$('prioOut'), ok=pr&&pr.d===today()&&pr.txt;
+    if(ok){ out.hidden=false; out.innerHTML='<b>'+esc(pr.txt)+'</b>'+(pr.done?'Fait. Bien joué.':'Ta priorité aujourd’hui.'); $('prioBtn').textContent=pr.done?'Changer':'C’est fait'; $('prio').value=''; }
+    else { out.hidden=true; $('prioBtn').textContent='Valider'; }
+  }
+  $('prioBtn').addEventListener('click',function(){
+    var pr=state.prio, v=$('prio').value.trim();
+    if(v){ state.prio={d:today(),txt:v,done:false}; }
+    else if(pr&&pr.d===today()&&pr.txt){ if(pr.done) state.prio=null; else pr.done=true; }
+    else { toast('Écris ta priorité du jour.'); return; }
+    save(); renderPrio();
+  });
 
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
