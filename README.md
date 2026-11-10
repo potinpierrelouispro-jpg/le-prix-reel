@@ -1,3 +1,3 @@
-# Le Prix Réel
+# Le Temps Réel
 
 Appli web qui traduit un prix en heures de travail. Les fichiers du site sont dans le dossier public.

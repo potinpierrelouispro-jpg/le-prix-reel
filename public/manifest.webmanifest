@@ -1,7 +1,7 @@
 {
-  "name": "Le Prix Réel",
-  "short_name": "Prix Réel",
-  "description": "Traduis tes dépenses en temps de travail et prends une pause pour te réinitialiser.",
+  "name": "Le Temps Réel",
+  "short_name": "Temps Réel",
+  "description": "Une pause pour te réinitialiser la tête : respirer, vider ses pensées, se concentrer.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f3f5f8",

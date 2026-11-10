@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Le Prix Réel</title>
+<title>Le Temps Réel</title>
 <meta name="theme-color" content="#2b3ff0">
-<meta name="description" content="Vois ce que tes achats coûtent en heures de travail.">
+<meta name="description" content="Une pause pour te réinitialiser la tête : respirer, vider ses pensées, se concentrer.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1925">
+<meta name="apple-mobile-web-app-title" content="Temps Réel">
+<meta name="app-version" content="2026-11-10-2000">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,13 +116,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(5,1fr);padding:6px;border-radius:30px;
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:30px;
   background:color-mix(in srgb,var(--card) 62%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,#fff 55%,transparent);
   box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/5);border-radius:24px;
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:24px;
   background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
   transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
 nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 2px 8px;color:var(--mute);cursor:pointer;
@@ -192,62 +192,13 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 <body>
 <div class="app">
   <header>
-    <h1>Le Prix Réel</h1>
-    <div class="rate" id="rateTop"></div>
+    <h1>Le Temps Réel</h1>
+    <div class="rate" id="dateTop"></div>
   </header>
 
   <main id="main">
-    <!-- Onglet Calculer -->
-    <section id="tab-calc" role="tabpanel" aria-labelledby="t-calc" style="display:flex;flex-direction:column;gap:14px">
-      <div class="card">
-        <label for="amount">Prix (en €)</label>
-        <input id="amount" class="amount" type="text" inputmode="decimal" autocomplete="off" value="12">
-        <div class="lbl" style="margin-top:12px">Un exemple en un geste</div>
-        <div class="chips" id="quick"></div>
-      </div>
-
-      <div class="card result" aria-live="polite">
-        <p class="small">Ça représente</p>
-        <div class="big" id="bigHours">—</div>
-        <p class="eq" id="eqText"></p>
-        <div class="actions">
-          <button class="btn primary" id="btnImg" type="button">Partager en image</button>
-          <button class="btn ghost" type="button" data-pause="60">Respirer 1 minute avant de décider</button>
-          <details class="trace">
-            <summary>Garder une trace (facultatif)</summary>
-            <div class="actions" style="margin-top:10px">
-              <button class="btn" id="btnSpend" type="button">Je le dépense</button>
-              <button class="btn" id="btnWait" type="button">Me le rappeler dans 48 h</button>
-              <button class="btn ghost" id="btnSkip" type="button">Je laisse de côté</button>
-            </div>
-          </details>
-        </div>
-        <p class="help" id="gamingHelp" hidden>Besoin d'en parler ? Joueurs Info Service : <a href="tel:0974751313">09 74 75 13 13</a> (service national d'aide, appel non surtaxé).</p>
-      </div>
-
-      <details class="card trace2">
-        <summary>Préciser : catégorie et intitulé</summary>
-        <div class="lbl" style="margin-top:14px">Catégorie</div>
-        <div class="chips" id="cats" role="group" aria-label="Catégorie"></div>
-        <label for="what" style="margin-top:14px">C'est pour quoi ? (facultatif)</label>
-        <input id="what" type="text" autocomplete="off" placeholder="Une veste, un resto, une sortie…">
-      </details>
-
-      <div class="card">
-        <label for="rateRange">Ton heure de travail vaut</label>
-        <div class="big" style="font-size:34px" id="rateRangeVal"></div>
-        <input id="rateRange" type="range" min="5" max="60" step="0.5" style="width:100%;accent-color:var(--accent)">
-        <p class="help">Glisse pour régler. Pour un calcul exact, entre ton salaire dans Réglages.</p>
-      </div>
-
-      <div class="card" id="wishCard" hidden>
-        <h2>Mes envies en attente</h2>
-        <div id="wishList"></div>
-      </div>
-    </section>
-
     <!-- Onglet Reset -->
-    <section id="tab-reset" role="tabpanel" aria-labelledby="t-reset" hidden style="display:flex;flex-direction:column;gap:14px">
+    <section id="tab-reset" role="tabpanel" aria-labelledby="t-reset" style="display:flex;flex-direction:column;gap:14px">
       <div class="card tool">
         <h2>Comment tu te sens ?</h2>
         <p class="sub">Un seul geste. L'appli te propose quoi faire. Ça reste sur ton téléphone.</p>
@@ -294,7 +245,6 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
         <div class="out" id="prioOut" hidden></div>
         <button class="btn sh" type="button" id="prioBtn">Valider</button>
       </div>
-
       <div class="card" id="helpCard">
         <h2>Besoin d'en parler ?</h2>
         <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
@@ -302,11 +252,11 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
       </div>
     </section>
 
-    <!-- Onglet Explorer -->
-    <section id="tab-explore" role="tabpanel" aria-labelledby="t-explore" hidden style="display:flex;flex-direction:column;gap:14px">
+    <!-- Onglet Écran -->
+    <section id="tab-screen" role="tabpanel" aria-labelledby="t-screen" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card tool">
         <h2>Ton temps d'écran</h2>
-        <p class="sub">Ce que ça fait sur une année.</p>
+        <p class="sub">Ce que ça fait sur une année. Regarde ton chiffre dans les réglages de ton téléphone.</p>
         <div class="val" id="scrVal"></div>
         <input id="scr" type="range" min="0.5" max="10" step="0.5" value="3" aria-label="Heures d'écran par jour">
         <div class="out" id="scrOut"></div>
@@ -314,90 +264,55 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
       </div>
 
       <div class="card tool">
-        <h2>Abonnements et paiements en plusieurs fois</h2>
-        <p class="sub">Additionne ce qui part chaque mois sans que tu y penses.</p>
-        <label for="sub">Total par mois (€)</label>
-        <input id="sub" type="text" inputmode="decimal" autocomplete="off" value="30">
-        <div class="out" id="subOut"></div>
-        <button class="btn sh" type="button" data-share="subOut">Partager ce chiffre</button>
-      </div>
-
-      <div class="card tool">
-        <h2>Ton loyer en heures de travail</h2>
-        <p class="sub">Pour voir ce que le logement prend dans ton mois.</p>
-        <label for="rent">Loyer et charges par mois (€)</label>
-        <input id="rent" type="text" inputmode="decimal" autocomplete="off" value="600">
-        <div class="out" id="rentOut"></div>
-        <button class="btn sh" type="button" data-share="rentOut">Partager ce chiffre</button>
-      </div>
-
-      <div class="card tool">
-        <h2>Mettre de côté</h2>
-        <p class="sub">Combien de travail tu gardes en épargnant un peu chaque mois.</p>
-        <label for="sav">Par mois (€)</label>
-        <input id="sav" type="text" inputmode="decimal" autocomplete="off" value="50">
-        <label for="goal" style="margin-top:12px">Un objectif à atteindre (€, facultatif)</label>
-        <input id="goal" type="text" inputmode="decimal" autocomplete="off" placeholder="Permis, voyage, voiture…">
-        <div class="out" id="savOut"></div>
-        <button class="btn sh" type="button" data-share="savOut">Partager ce chiffre</button>
+        <h2>Pause sans écran</h2>
+        <p class="sub">Pose le téléphone face cachée et fais une seule chose.</p>
+        <button class="btn primary sh" type="button" data-tool="focus" style="margin-top:0">Lancer un minuteur</button>
       </div>
 
       <div class="card">
         <h2>Savoir en 30 secondes</h2>
-        <details class="tip"><summary>Payer en plusieurs fois, c'est quoi ?</summary><p>C'est un crédit : tu reçois l'achat maintenant et tu paies après. Le prix ne baisse pas, tu le sens juste plus tard. Chaque mensualité est du travail déjà promis.</p></details>
-        <details class="tip"><summary>Pourquoi les petits abonnements comptent</summary><p>Un abonnement de 10 € par mois fait 120 € par an. Plusieurs abonnements oubliés peuvent représenter une journée de travail ou plus chaque mois.</p></details>
-        <details class="tip"><summary>Se payer en premier</summary><p>Une méthode simple : dès que ton salaire arrive, tu mets une petite somme de côté, puis tu dépenses ce qu'il reste. Même 20 € par mois, ça devient une habitude.</p></details>
-        <details class="tip"><summary>Acheter pour suivre les autres</summary><p>Sur les réseaux, on voit les achats, pas les comptes. Se demander « est-ce que j'en ai envie, ou est-ce que je suis les autres ? » aide. Le bouton « Me le rappeler dans 48 h » est fait pour ça.</p></details>
-        <details class="tip"><summary>Parler d'argent avec quelqu'un</summary><p>En cas de doute (banque, crédit, loyer), tu peux poser tes questions à ta banque, à un conseiller de ton école ou de ton CFA, ou au Point Conseil Budget de ta ville : ils sont gratuits.</p></details>
+        <details class="tip"><summary>Pourquoi une pause aide</summary><p>Une courte pause permet souvent de revenir plus calme et plus clair. Même une minute de respiration lente peut suffire.</p></details>
+        <details class="tip"><summary>Une seule chose à la fois</summary><p>Faire plusieurs choses en même temps fatigue. Choisis une tâche, lance un minuteur, puis fais une pause.</p></details>
+        <details class="tip"><summary>Le téléphone dans une autre pièce</summary><p>Le laisser hors de vue pendant que tu travailles aide à rester concentré. Tu le retrouves à la pause.</p></details>
+        <details class="tip"><summary>Avant de dormir</summary><p>Éviter les écrans juste avant de se coucher aide souvent à mieux s'endormir. Un exercice de respiration peut les remplacer.</p></details>
+        <details class="tip"><summary>Comparer sur les réseaux</summary><p>Sur les réseaux, on voit les meilleurs moments des autres, pas leur quotidien. Si tu te sens mal après avoir scrollé, c'est le moment d'une pause.</p></details>
+        <details class="tip"><summary>En parler à quelqu'un</summary><p>Parler à un proche, à un professionnel de ton école ou de ton CFA, ou à une ligne d'écoute gratuite aide souvent plus qu'on ne le pense. Les numéros sont dans l'onglet Reset.</p></details>
       </div>
-
     </section>
 
     <!-- Onglet Semaine -->
     <section id="tab-week" role="tabpanel" aria-labelledby="t-week" hidden style="display:flex;flex-direction:column;gap:14px">
-      <div class="note" id="exampleNote">
-        <span>Ces dépenses sont des exemples. Remplace-les par les tiennes.</span>
-        <button class="mini" id="clearExamples" type="button">Effacer</button>
-      </div>
       <div class="card">
         <h2>Les 7 derniers jours</h2>
         <div class="tiles">
-          <div class="tile"><div class="v" id="wkTotal">0 h</div><div class="k">de travail dépensées</div></div>
-          <div class="tile"><div class="v" id="wkKept">0 h</div><div class="k">laissées de côté</div></div>
+          <div class="tile"><div class="v" id="wkBreath">0</div><div class="k">pauses de respiration</div></div>
+          <div class="tile"><div class="v" id="wkFocus">0 min</div><div class="k">de concentration</div></div>
+          <div class="tile"><div class="v" id="wkGround">0</div><div class="k">retours ici et maintenant</div></div>
+          <div class="tile"><div class="v" id="wkPrio">0</div><div class="k">priorités faites</div></div>
         </div>
-        <p class="help" id="wkDays"></p>
-        <p class="help" id="wkAll"></p>
+        <p class="help" id="wkMsg"></p>
       </div>
       <div class="card">
-        <h2>Où part ton temps de travail</h2>
-        <div class="bars" id="bars"></div>
-      </div>
-      <div class="card">
-        <h2>Dernières dépenses</h2>
-        <div id="logList"></div>
+        <h2>Tes humeurs</h2>
+        <div class="bars" id="moodBars"></div>
       </div>
     </section>
 
     <!-- Onglet Réglages -->
     <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
-        <h2>Calcul exact (facultatif)</h2>
-        <p class="help" style="margin:0 0 12px">Entre ton salaire pour remplacer le curseur par ton vrai taux horaire.</p>
-        <label for="net">Salaire net par mois (€)</label>
-        <input id="net" type="text" inputmode="decimal" autocomplete="off">
-        <label for="hrs" style="margin-top:14px">Heures travaillées par mois</label>
-        <input id="hrs" type="text" inputmode="decimal" autocomplete="off">
-        <p class="help">Pour 35 h par semaine, c'est environ 152 h par mois. Compte seulement le temps en entreprise : le chiffre est plus juste.</p>
-        <p class="eq" style="margin-top:12px"><b id="rateBig"></b></p>
-      </div>
-      <div class="card">
         <h2>Installer et partager</h2>
         <p class="help" style="margin-top:0"><b>iPhone</b> : ouvre le lien dans Safari, touche Partager, puis « Sur l'écran d'accueil ».<br><b>Android</b> : menu du navigateur, puis « Installer l'application ».</p>
         <button class="btn primary" id="btnShare" type="button" style="width:100%;margin-top:12px">Partager l'appli</button>
       </div>
       <div class="card">
+        <h2>Tes données</h2>
+        <p class="help" style="margin-top:0">Tes humeurs, ta priorité et tes statistiques restent sur ton téléphone. Tu peux tout effacer.</p>
+        <button class="btn" id="btnWipe" type="button" style="width:100%;margin-top:12px">Effacer mes données</button>
+      </div>
+      <div class="card">
         <h2>À propos</h2>
-        <p class="help" style="margin-top:0">Le Prix Réel ne juge pas tes achats. Il traduit un prix en temps de travail, et c'est toi qui décides. Tes données restent sur ton appareil.</p>
+        <p class="help" style="margin-top:0">Le Temps Réel est un petit outil pour faire une pause et se réinitialiser la tête. Il ne remplace pas un professionnel de santé. Si ça ne va pas, les numéros d'aide sont dans l'onglet Reset.</p>
         <p class="help" id="ver"></p>
       </div>
     </section>
@@ -405,15 +320,13 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 
   <nav role="tablist" aria-label="Sections">
     <span class="thumb" id="thumb" aria-hidden="true"></span>
-    <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>Calculer</button>
-    <button id="t-reset" role="tab" aria-selected="false" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
-    <button id="t-explore" role="tab" aria-selected="false" data-tab="explore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explorer</button>
+    <button id="t-reset" role="tab" aria-selected="true" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
+    <button id="t-screen" role="tab" aria-selected="false" data-tab="screen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Écran</button>
     <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Semaine</button>
     <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
   <div class="toast" id="toast" role="status"></div>
 </div>
-
 
 <div id="pause" role="dialog" aria-modal="true" aria-label="Pause respiration">
   <button class="x" id="pauseX" type="button" aria-label="Fermer">×</button>
@@ -437,267 +350,18 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 </div>
 <script>
 (function(){
-  var KEY='prixreel.v1', DAY=86400000, WORKDAY=7;
-  var CATS=['Essentiel','Plaisir','Vêtements & beauté','Sorties','Jeux d\'argent','Autre'];
-  var state=null, cat='Plaisir';
-
-  function seed(){
-    var n=Date.now();
-    return {hourly:10,net:0,hours:151.67,log:[],kept:[],wishes:[]};
-  }
+  var KEY='tempsreel.v1', DAY=86400000, state=null;
   function load(){
-    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log){ if(!(o.hourly>0)) o.hourly=(o.hours>0&&o.net>0)?o.net/o.hours:10; return o;}}}catch(e){}
-    return seed();
+    try{ var s=localStorage.getItem(KEY); if(s){ var o=JSON.parse(s); if(o&&typeof o==='object'){ o.moods=o.moods||[]; o.ev=o.ev||[]; return o; } } }catch(e){}
+    return {moods:[],ev:[],prio:null};
   }
-  function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
-
-  function num(v){ var x=parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(x)?x:NaN; }
-  function rate(){ return state.hourly>0 ? state.hourly : 0; }
-  function euro(x){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(x); }
-  function fmtH(h){
-    var m=Math.round(h*60), hh=Math.floor(m/60), mm=m%60;
-    if(hh===0) return mm+' min';
-    return hh+' h '+(mm<10?'0':'')+mm;
-  }
-  function fmtShort(h){ return h>=10 ? Math.round(h)+' h' : (Math.round(h*10)/10).toString().replace('.',',')+' h'; }
-  function toHours(amt){ var r=rate(); return r>0 ? amt/r : 0; }
-  function eqText(h){
-    var d=h/WORKDAY;
-    if(d>=1){ var s=(Math.round(d*10)/10).toString().replace('.',','); return '≈ '+s+(d>=2?' jours':' jour')+' de travail ('+WORKDAY+' h par jour)'; }
-    return '≈ '+Math.max(1,Math.round(d*100))+' % d\'une journée de travail';
-  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function nf(x,d){ return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d||0}).format(x); }
   var toastTimer;
   function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('on');},2200); }
-  function uid(){ return Date.now()+Math.floor(Math.random()*1000); }
-
-  /* ---- Calculer ---- */
-  function renderCats(){
-    var box=$('cats'); box.innerHTML='';
-    CATS.forEach(function(c){
-      var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=c;
-      b.setAttribute('aria-pressed', c===cat?'true':'false');
-      b.addEventListener('click',function(){ cat=c; renderCats(); renderResult(); });
-      box.appendChild(b);
-    });
-  }
-  var QUICK=[{l:'Café',a:3,c:'Plaisir'},{l:'Fast-food',a:12,c:'Plaisir'},{l:'Sortie entre amis',a:40,c:'Sorties'},{l:'Sneakers',a:120,c:'Vêtements & beauté'},{l:'Pari ou jeu',a:20,c:'Jeux d\'argent'}];
-  function renderQuick(){
-    var box=$('quick'); box.innerHTML='';
-    QUICK.forEach(function(q){
-      var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=q.l+' · '+q.a+' €';
-      b.addEventListener('click',function(){ $('amount').value=String(q.a); $('what').value=q.l; cat=q.c; renderCats(); renderResult(); });
-      box.appendChild(b);
-    });
-  }
-  function renderResult(){
-    var a=num($('amount').value), ok=a>0 && rate()>0;
-    $('bigHours').textContent = ok ? fmtH(toHours(a)) : '—';
-    $('eqText').textContent = ok ? eqText(toHours(a)) : (rate()>0 ? 'Entre un prix pour voir ce que ça représente.' : 'Renseigne ton salaire dans Réglages.');
-    ['btnSpend','btnWait','btnSkip','btnImg'].forEach(function(id){ $(id).disabled=!ok; $(id).style.opacity=ok?1:.5; });
-    $('gamingHelp').hidden = cat!=='Jeux d\'argent';
-  }
-  function currentItem(){
-    var a=num($('amount').value), w=$('what').value.trim();
-    return {id:uid(),label:w||cat,cat:cat,amt:a};
-  }
-  function afterAdd(msg){ $('what').value=''; save(); renderAll(); toast(msg); }
-
-  $('amount').addEventListener('input',renderResult);
-  $('btnSpend').addEventListener('click',function(){
-    var it=currentItem(); if(!(it.amt>0)) return; it.t=Date.now(); state.log.unshift(it);
-    afterAdd('Ajouté à ta semaine : '+fmtH(toHours(it.amt))+' de travail.');
-  });
-  $('btnWait').addEventListener('click',function(){
-    var it=currentItem(); if(!(it.amt>0)) return; it.due=Date.now()+2*DAY; state.wishes.unshift(it);
-    afterAdd('Rappel dans 48 h. Tu décideras à ce moment-là.');
-  });
-  $('btnSkip').addEventListener('click',function(){
-    var it=currentItem(); if(!(it.amt>0)) return; it.t=Date.now(); state.kept.unshift(it);
-    afterAdd(fmtH(toHours(it.amt))+' de travail gardées.');
-  });
-
-  function renderWishes(){
-    var box=$('wishList'), now=Date.now();
-$('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHTML=''; return; }
-    box.innerHTML='';
-    state.wishes.forEach(function(w){
-      var rem=w.due-now, status = rem<=0 ? 'Prêt à décider' : 'Dans '+Math.ceil(rem/3600000)+' h';
-      var row=document.createElement('div'); row.className='row'; row.style.flexWrap='wrap';
-      row.innerHTML='<div class="t"><b>'+esc(w.label)+'</b><span>'+euro(w.amt)+' · '+fmtH(toHours(w.amt))+' · '+status+'</span></div>'+
-        '<div><button class="mini" data-a="buy" type="button">Je l\'achète</button><button class="mini" data-a="drop" type="button">Plus envie</button></div>';
-      row.querySelector('[data-a=buy]').addEventListener('click',function(){
-        state.wishes=state.wishes.filter(function(x){return x.id!==w.id;});
-        state.log.unshift({id:uid(),label:w.label,cat:w.cat,amt:w.amt,t:Date.now()});
-        save(); renderAll(); toast('Ajouté à ta semaine.');
-      });
-      row.querySelector('[data-a=drop]').addEventListener('click',function(){
-        state.wishes=state.wishes.filter(function(x){return x.id!==w.id;});
-        state.kept.unshift({id:uid(),label:w.label,cat:w.cat,amt:w.amt,t:Date.now()});
-        save(); renderAll(); toast(fmtH(toHours(w.amt))+' de travail gardées.');
-      });
-      box.appendChild(row);
-    });
-  }
-
-  /* ---- Semaine ---- */
-  function renderWeek(){
-    var since=Date.now()-7*DAY;
-    var wk=state.log.filter(function(x){return x.t>=since;});
-    var kp=state.kept.filter(function(x){return x.t>=since;});
-    var total=wk.reduce(function(s,x){return s+toHours(x.amt);},0);
-    var kept=kp.reduce(function(s,x){return s+toHours(x.amt);},0);
-    $('wkTotal').textContent=fmtShort(total);
-    $('wkKept').textContent=fmtShort(kept);
-    $('wkDays').textContent = total>0 ? eqText(total) : '';
-    var allKept=state.kept.reduce(function(s2,x){return s2+toHours(x.amt);},0);
-    $('wkAll').textContent = state.kept.length ? 'Depuis le début : '+fmtH(allKept)+' de travail gardées ('+state.kept.length+' achat'+(state.kept.length>1?'s':'')+' laissé'+(state.kept.length>1?'s':'')+' de côté).' : '';
-    var by={}; CATS.forEach(function(c){by[c]=0;});
-    wk.forEach(function(x){ by[x.cat]=(by[x.cat]||0)+toHours(x.amt); });
-    var max=Math.max.apply(null,CATS.map(function(c){return by[c];}).concat([0.0001]));
-    var bars=$('bars'); bars.innerHTML='';
-    var any=false;
-    CATS.forEach(function(c){
-      if(by[c]<=0) return; any=true;
-      var d=document.createElement('div'); d.className='bar';
-      d.innerHTML='<div class="top"><span>'+esc(c)+'</span><span>'+fmtH(by[c])+'</span></div><div class="track"><div class="fill" style="width:'+Math.max(3,by[c]/max*100)+'%"></div></div>';
-      bars.appendChild(d);
-    });
-    if(!any) bars.innerHTML='<p class="empty">Aucune dépense sur les 7 derniers jours.</p>';
-    var list=$('logList'); list.innerHTML='';
-    if(!state.log.length){ list.innerHTML='<p class="empty">Rien pour l\'instant.</p>'; }
-    state.log.slice(0,8).forEach(function(x){
-      var row=document.createElement('div'); row.className='row';
-      row.innerHTML='<div class="t"><b>'+esc(x.label)+'</b><span>'+esc(x.cat)+' · '+euro(x.amt)+'</span></div><div class="n">'+fmtH(toHours(x.amt))+'</div><button class="mini" type="button" aria-label="Retirer '+esc(x.label)+'">Retirer</button>';
-      row.querySelector('button').addEventListener('click',function(){
-        state.log=state.log.filter(function(y){return y.id!==x.id;}); save(); renderAll();
-      });
-      list.appendChild(row);
-    });
-    var hasEx=state.log.concat(state.kept,state.wishes).some(function(x){return x.ex;});
-    $('exampleNote').hidden=!hasEx;
-  }
-  $('clearExamples').addEventListener('click',function(){
-    function f(a){return a.filter(function(x){return !x.ex;});}
-    state.log=f(state.log); state.kept=f(state.kept); state.wishes=f(state.wishes);
-    save(); renderAll(); toast('Exemples effacés.');
-  });
-
-  /* ---- Réglages ---- */
-  function renderSettings(){
-    var r=rate();
-    $('rateTop').textContent = r>0 ? 'Ton heure : '+euro(r) : '';
-    $('rateBig').textContent = r>0 ? 'Ton heure de travail vaut '+euro(r)+'.' : 'Renseigne ton salaire et tes heures.';
-  }
-  function bindSetting(id,key){
-    $(id).addEventListener('input',function(){
-      var v=num($(id).value); if(v>0){ state[key]=v; if(state.net>0&&state.hours>0) state.hourly=state.net/state.hours; save(); renderAll(true); }
-    });
-  }
-  $('rateRange').addEventListener('input',function(){ var v=num(this.value); if(v>0){ state.hourly=v; save(); renderAll(true); } });
-  bindSetting('net','net'); bindSetting('hrs','hours');
-
-  function renderAll(keepInputs){
-    renderSettings(); renderResult(); renderWishes(); renderWeek(); renderExplore(); if(typeof renderMoods==='function'){ renderMoods(); renderPrio(); }
-    if(!keepInputs){ $('net').value=state.net>0?String(state.net).replace('.',','):''; $('hrs').value=String(state.hours).replace('.',','); }
-    var rr=$('rateRange'); if(rr){ rr.value=rate(); $('rateRangeVal').textContent=euro(rate()); }
-  }
-
-  /* ---- Onglets ---- */
-  var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['calc','reset','explore','week','set'], cur=-1;
-  function show(name){
-    var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
-    ORDER.forEach(function(n){
-      var p=$('tab-'+n), on=n===name; p.hidden=!on; p.style.display=on?'flex':'none';
-      p.classList.remove('enter-r','enter-l');
-      if(on&&!first&&idx!==cur){ void p.offsetWidth; p.classList.add(dir); }
-    });
-    tabs.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab===name?'true':'false'); });
-    $('thumb').style.transform='translateX('+(idx*100)+'%)';
-    cur=idx; $('main').scrollTop=0;
-  }
-  tabs.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.tab); }); });
-  /* Glisser à gauche / à droite pour changer d'onglet */
-  (function(){
-    var x0=0,y0=0,t0=0,m=$('main');
-    m.addEventListener('touchstart',function(e){ var t=e.touches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); },{passive:true});
-    m.addEventListener('touchend',function(e){
-      var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
-      if(Date.now()-t0>600||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8) return;
-      var n=cur+(dx<0?1:-1); if(n>=0&&n<ORDER.length) show(ORDER[n]);
-    },{passive:true});
-  })();
-
-  $('btnShare').addEventListener('click',function(){
-    var url=location.href.split('#')[0], data={title:'Le Prix Réel',text:'Vois ce que tes achats coûtent en heures de travail.',url:url};
-    function copy(){
-      try{ navigator.clipboard.writeText(url).then(function(){toast('Lien copié.');},function(){toast(url);}); }
-      catch(e){ toast(url); }
-    }
-    try{ if(navigator.share){ navigator.share(data).catch(function(){}); } else { copy(); } }
-    catch(e){ copy(); }
-  });
-
-  /* ---- Partage en image (pour Instagram) ---- */
-  function makeImage(cb){
-    var a=num($('amount').value); if(!(a>0)||!(rate()>0)) return;
-    var h=toHours(a), what=$('what').value.trim()||cat;
-    var W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H;
-    var x=c.getContext('2d'), F='"Bricolage Grotesque","Arial Narrow",Arial,sans-serif';
-    x.fillStyle='#2b3ff0'; x.fillRect(0,0,W,H);
-    x.fillStyle='#fff'; x.textAlign='left'; x.textBaseline='alphabetic';
-    x.font='800 44px '+F; x.fillText('Le Prix Réel',80,130);
-    function fit(t,size,max){ x.font='800 '+size+'px '+F; while(x.measureText(t).width>max&&size>30){ size-=4; x.font='800 '+size+'px '+F; } }
-    x.globalAlpha=.85; fit(what,56,W-160); x.fillText(what,80,430);
-    x.font='600 44px '+F; x.fillText(euro(a)+' =',80,500); x.globalAlpha=1;
-    var big=fmtH(h); fit(big,260,W-160); x.fillText(big,80,760);
-    x.font='600 52px '+F; x.fillText('de travail',80,840);
-    x.globalAlpha=.85; x.font='600 40px '+F; x.fillText(eqText(h).replace(/ \(.*\)$/,''),80,920); x.globalAlpha=1;
-    x.font='600 38px '+F; x.fillText('Et toi, ça te coûte combien d\u2019heures ?',80,1180);
-    x.globalAlpha=.8; x.font='500 34px '+F; x.fillText(location.host,80,1240); x.globalAlpha=1;
-    c.toBlob(function(b){ cb(b,big); },'image/png');
-  }
-  $('btnImg').addEventListener('click',function(){
-    makeImage(function(blob,big){
-      if(!blob){ toast('Image impossible sur cet appareil.'); return; }
-      var f; try{ f=new File([blob],'prix-reel.png',{type:'image/png'}); }catch(e){}
-      if(f&&navigator.canShare&&navigator.canShare({files:[f]})){
-        navigator.share({files:[f]}).catch(function(){});
-      }else{
-        var u=URL.createObjectURL(blob), l=document.createElement('a'); l.href=u; l.download='prix-reel.png'; document.body.appendChild(l); l.click(); l.remove();
-        setTimeout(function(){URL.revokeObjectURL(u);},4000); toast('Image enregistrée.');
-      }
-    });
-  });
-
-
-  /* ---- Explorer ---- */
-  function nf(x,d){ return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d||0}).format(x); }
-  function renderExplore(){
-    var r=rate(), mh=151.67;
-    var sc=num($('scr').value)||0; $('scrVal').textContent=nf(sc,1)+' h par jour';
-    var yh=sc*365;
-    $('scrOut').innerHTML='<b>'+nf(yh/16)+' jours par an</b>'+nf(yh)+' h par an, soit '+nf(yh/16)+' jours éveillés (à 16 h d\u2019éveil par jour), ou '+nf(yh/35)+' semaines de travail à temps plein.';
-    var sb=num($('sub').value);
-    if(sb>=0&&r>0){ var hm=sb/r; $('subOut').innerHTML='<b>'+fmtH(hm)+' de travail par mois</b>'+euro(sb*12)+' par an, soit '+nf(hm*12)+' h de travail sur l\u2019année (≈ '+nf(hm*12/WORKDAY,1)+' jours).'; } else $('subOut').textContent='Entre un montant.';
-    var rt=num($('rent').value);
-    if(rt>0&&r>0){ var hr=rt/r, inc=r*mh, ok=inc>=3*rt;
-      $('rentOut').innerHTML='<b>'+fmtH(hr)+' de travail par mois</b>'+nf(hr/mh*100)+' % d\u2019un mois de travail de '+nf(mh)+' h. Revenu estimé avec ton taux : '+euro(inc)+' par mois. Les propriétaires demandent souvent un revenu d\u2019au moins 3 fois le loyer, soit '+euro(rt*3)+' ici'+(ok?' : tu es au-dessus.':'.'); } else $('rentOut').textContent='Entre un loyer.';
-    var sv=num($('sav').value), gl=num($('goal').value), goalTxt='';
-    if(gl>0&&sv>0&&r>0){ var mo=Math.ceil(gl/sv), y=Math.floor(mo/12), m2=mo%12;
-      goalTxt=' Pour '+euro(gl)+' ('+fmtH(gl/r)+' de travail), il te faut '+mo+' mois'+(y>0?' (≈ '+y+' an'+(y>1?'s':'')+(m2?' et '+m2+' mois':'')+')':'')+' à '+euro(sv)+' par mois.'; }
-    if(sv>=0&&r>0){ $('savOut').innerHTML='<b>'+euro(sv*12)+' en 1 an</b>'+nf(sv*12/r)+' h de travail gardées en 1 an, '+euro(sv*60)+' en 5 ans ('+nf(sv*60/r)+' h). Sans intérêts, juste ce que tu mets de côté.'+goalTxt; } else $('savOut').textContent='Entre un montant.';
-  }
-  ['scr','sub','rent','sav','goal'].forEach(function(id){ $(id).addEventListener('input',renderExplore); });
-  document.querySelectorAll('[data-share]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var el=$(b.getAttribute('data-share')), txt=el.innerText.replace(/\n+/g,' · ')+' — Le Prix Réel : '+location.href.split('#')[0];
-      try{ if(navigator.share){ navigator.share({text:txt}).catch(function(){}); return; } }catch(e){}
-      try{ navigator.clipboard.writeText(txt).then(function(){toast('Texte copié.');}); }catch(e){ toast(txt); }
-    });
-  });
+  function logEv(k,v){ state.ev=(state.ev||[]).concat([{t:Date.now(),k:k,v:v||0}]).slice(-400); save(); renderWeek(); }
 
   /* ---- Respiration (rythmes) ---- */
   var RH={calme:{n:'Calme 5-5',p:[['Inspire…',5,1],['Expire…',5,.55]]},carre:{n:'Carré 4-4-4-4',p:[['Inspire…',4,1],['Retiens…',4,1],['Expire…',4,.55],['Retiens…',4,.55]]},r478:{n:'4-7-8',p:[['Inspire…',4,1],['Retiens…',7,1],['Expire…',8,.55]]}};
@@ -707,7 +371,7 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   function bRhythms(){ B.rh.innerHTML=''; Object.keys(RH).forEach(function(k){ var c=document.createElement('button'); c.type='button'; c.className='chip'; c.textContent=RH[k].n; c.setAttribute('aria-pressed',k===B.rhy?'true':'false'); c.addEventListener('click',function(){ B.rhy=k; bRhythms(); }); B.rh.appendChild(c); }); }
   function bOpen(d,rhy){ bStop(); B.dur=d; B.left=d; if(rhy) B.rhy=rhy; B.dn.hidden=true; B.sub.hidden=false; B.rh.hidden=false; bRhythms(); B.ph.textContent=''; B.tm.textContent=fmtT(d); B.go.textContent='Commencer'; B.go.onclick=bStart; B.go.hidden=false; B.box.classList.add('on'); }
   function bClose(){ bStop(); B.box.classList.remove('on'); }
-  function bFinish(){ bStop(); B.ph.textContent='Bien joué.'; B.tm.textContent=''; B.dn.hidden=false; B.sub.hidden=true; B.rh.hidden=true; B.go.textContent='Terminer'; B.go.onclick=bClose; B.go.hidden=false; }
+  function bFinish(){ bStop(); logEv('breath',Math.round(B.dur/60)); B.ph.textContent='Bien joué.'; B.tm.textContent=''; B.dn.hidden=false; B.sub.hidden=true; B.rh.hidden=true; B.go.textContent='Terminer'; B.go.onclick=bClose; B.go.hidden=false; }
   function bPhase(i){
     if(!B.on) return; var P=RH[B.rhy].p, ph=P[i%P.length];
     B.ph.textContent=ph[0]; B.orb.style.transition='transform '+ph[1]+'s ease-in-out'; B.orb.style.transform='scale('+ph[2]+')';
@@ -730,12 +394,12 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   function shOpen(html){ SH.body.innerHTML=html; SH.box.classList.add('on'); }
   function toolDump(){
     shOpen('<h2>Vider ta tête</h2><p class="sub">Écris tout ce qui tourne : tâches, soucis, idées. Rien n’est enregistré, tout s’efface quand tu fermes.</p><textarea id="dumpTxt" placeholder="Vas-y, écris sans te relire…" aria-label="Zone d’écriture"></textarea><div><button class="btn primary" id="dumpClear" type="button">Tout effacer</button></div>');
-    $('dumpClear').addEventListener('click',function(){ var t=$('dumpTxt'); t.style.opacity='0'; setTimeout(function(){ t.value=''; t.style.opacity='1'; toast('Effacé. Rien n’a été gardé.'); },600); });
+    $('dumpClear').addEventListener('click',function(){ var t=$('dumpTxt'); t.style.opacity='0'; setTimeout(function(){ t.value=''; t.style.opacity='1'; logEv('dump',1); toast('Effacé. Rien n’a été gardé.'); },600); });
   }
   function toolGround(){
     var steps=[['5','choses que tu vois'],['4','choses que tu peux toucher'],['3','choses que tu entends'],['2','choses que tu sens'],['1','chose que tu goûtes']], i=0;
     function draw(){
-      if(i>=steps.length){ shOpen('<h2>Bien joué</h2><p class="sub">Respire un grand coup. Tu es ici, maintenant.</p><button class="btn primary" id="gEnd" type="button">Terminer</button>'); $('gEnd').addEventListener('click',shClose); return; }
+      if(i>=steps.length){ logEv('ground',1); shOpen('<h2>Bien joué</h2><p class="sub">Respire un grand coup. Tu es ici, maintenant.</p><button class="btn primary" id="gEnd" type="button">Terminer</button>'); $('gEnd').addEventListener('click',shClose); return; }
       shOpen('<p class="sub">Étape '+(i+1)+' sur 5</p><div class="big2">'+steps[i][0]+'</div><div class="step">Nomme '+steps[i][0]+' '+steps[i][1]+'</div><button class="btn primary" id="gNext" type="button">'+(i<4?'Suivant':'Fini')+'</button>');
       $('gNext').addEventListener('click',function(){ i++; draw(); });
     }
@@ -752,7 +416,7 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
     $('fStop').addEventListener('click',shClose);
     function tick(){
       var left=Math.round((end-Date.now())/1000), el=$('fTime'); if(!el) return;
-      if(left<=0){ clearInterval(SH.clock); SH.clock=null; shOpen('<h2>Terminé</h2><p class="sub">Bravo. Lève-toi, bois de l’eau, bouge un peu avant de continuer.</p><button class="btn primary" id="fEnd" type="button">Terminer</button>'); $('fEnd').addEventListener('click',shClose); return; }
+      if(left<=0){ clearInterval(SH.clock); SH.clock=null; logEv('focus',min); shOpen('<h2>Terminé</h2><p class="sub">Bravo. Lève-toi, bois de l’eau, bouge un peu avant de continuer.</p><button class="btn primary" id="fEnd" type="button">Terminer</button>'); $('fEnd').addEventListener('click',shClose); return; }
       el.textContent=fmtT(left);
     }
     SH.clock=setInterval(tick,500);
@@ -791,17 +455,88 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   $('prioBtn').addEventListener('click',function(){
     var pr=state.prio, v=$('prio').value.trim();
     if(v){ state.prio={d:today(),txt:v,done:false}; }
-    else if(pr&&pr.d===today()&&pr.txt){ if(pr.done) state.prio=null; else pr.done=true; }
+    else if(pr&&pr.d===today()&&pr.txt){ if(pr.done) state.prio=null; else { pr.done=true; logEv('prio',1); } }
     else { toast('Écris ta priorité du jour.'); return; }
     save(); renderPrio();
   });
 
+
+  /* ---- Semaine ---- */
+  function renderWeek(){
+    var since=Date.now()-7*DAY, ev=(state.ev||[]).filter(function(e){return e.t>=since;});
+    function cnt(k){ return ev.filter(function(e){return e.k===k;}).length; }
+    var focus=ev.filter(function(e){return e.k==='focus';}).reduce(function(s,e){return s+e.v;},0);
+    $('wkBreath').textContent=cnt('breath'); $('wkFocus').textContent=nf(focus)+' min'; $('wkGround').textContent=cnt('ground'); $('wkPrio').textContent=cnt('prio');
+    $('wkMsg').textContent = ev.length ? '' : 'Rien pour l\u2019instant. Fais une pause dans l\u2019onglet Reset et elle apparaîtra ici.';
+    var c={}, tot=0; (state.moods||[]).forEach(function(m){ if(m.t>=since){ c[m.m]=(c[m.m]||0)+1; tot++; } });
+    var box=$('moodBars'); box.innerHTML='';
+    var max=Math.max.apply(null,Object.keys(MOOD).map(function(k){return c[k]||0;}).concat([1]));
+    Object.keys(MOOD).forEach(function(k){
+      if(!c[k]) return; var d=document.createElement('div'); d.className='bar';
+      d.innerHTML='<div class="top"><span>'+MOOD[k].e+' '+esc(MOODN[k])+'</span><span>'+c[k]+'</span></div><div class="track"><div class="fill" style="width:'+Math.max(6,c[k]/max*100)+'%"></div></div>';
+      box.appendChild(d);
+    });
+    if(!tot) box.innerHTML='<p class="empty">Aucune humeur notée cette semaine.</p>';
+  }
+
+  /* ---- Écran ---- */
+  function renderScreen(){
+    var sc=parseFloat($('scr').value)||0; $('scrVal').textContent=nf(sc,1)+' h par jour';
+    var yh=sc*365;
+    $('scrOut').innerHTML='<b>'+nf(yh/16)+' jours par an</b>'+nf(yh)+' h par an, soit '+nf(yh/16)+' jours éveillés (à 16 h d\u2019éveil par jour), ou '+nf(yh/35)+' semaines de travail à temps plein.';
+  }
+  $('scr').addEventListener('input',renderScreen);
+  document.querySelectorAll('[data-share]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var el=$(b.getAttribute('data-share')), txt=el.innerText.replace(/\n+/g,' · ')+' — Le Temps Réel : '+location.href.split('#')[0];
+      try{ if(navigator.share){ navigator.share({text:txt}).catch(function(){}); return; } }catch(e){}
+      try{ navigator.clipboard.writeText(txt).then(function(){toast('Texte copié.');}); }catch(e){ toast(txt); }
+    });
+  });
+
+  /* ---- Onglets ---- */
+  var tabs=document.querySelectorAll('nav [role=tab]');
+  var ORDER=['reset','screen','week','set'], cur=-1;
+  function show(name){
+    var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
+    ORDER.forEach(function(n){
+      var p=$('tab-'+n), on=n===name; p.hidden=!on; p.style.display=on?'flex':'none';
+      p.classList.remove('enter-r','enter-l');
+      if(on&&!first&&idx!==cur){ void p.offsetWidth; p.classList.add(dir); }
+    });
+    tabs.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab===name?'true':'false'); });
+    $('thumb').style.transform='translateX('+(idx*100)+'%)';
+    cur=idx; $('main').scrollTop=0;
+  }
+  tabs.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.tab); }); });
+  (function(){
+    var x0=0,y0=0,t0=0,m=$('main');
+    m.addEventListener('touchstart',function(e){ var t=e.touches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); },{passive:true});
+    m.addEventListener('touchend',function(e){
+      var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+      if(Date.now()-t0>600||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8) return;
+      var n=cur+(dx<0?1:-1); if(n>=0&&n<ORDER.length) show(ORDER[n]);
+    },{passive:true});
+  })();
+
+  $('btnShare').addEventListener('click',function(){
+    var url=location.href.split('#')[0], data={title:'Le Temps Réel',text:'Une pause pour te réinitialiser la tête.',url:url};
+    function copy(){ try{ navigator.clipboard.writeText(url).then(function(){toast('Lien copié.');},function(){toast(url);}); }catch(e){ toast(url); } }
+    try{ if(navigator.share){ navigator.share(data).catch(function(){}); } else { copy(); } }catch(e){ copy(); }
+  });
+  $('btnWipe').addEventListener('click',function(){
+    if(!confirm('Effacer toutes tes données sur cet appareil ?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    state=load(); renderAll(); toast('Données effacées.');
+  });
+
+  var MOODN={tendu:'Tendu',disperse:'Dispersé',fatigue:'Fatigué',bas:'Bas',bien:'Ça va'};
+  function renderAll(){ renderMoods(); renderPrio(); renderWeek(); renderScreen(); }
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
-  renderCats();
-  renderQuick();
+  try{ $('dateTop').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
   renderAll();
-  show('calc');
+  show('reset');
 })();
 
 (function(){
