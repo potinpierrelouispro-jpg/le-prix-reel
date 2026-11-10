@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2200">
+<meta name="app-version" content="2026-11-10-2215">
 
 <style>
 /* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
@@ -114,13 +114,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;border-radius:30px;
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(2,1fr);padding:6px;border-radius:30px;
   background:color-mix(in srgb,var(--card) 62%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,#fff 55%,transparent);
   box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/3);border-radius:24px;
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/2);border-radius:24px;
   background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
   transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
 nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 2px 8px;color:var(--mute);cursor:pointer;
@@ -294,34 +294,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
 
     </section>
 
-    <!-- Onglet Écran -->
-    <section id="tab-screen" role="tabpanel" aria-labelledby="t-screen" hidden style="display:flex;flex-direction:column;gap:14px">
-      <div class="card tool">
-        <h2>Ton temps d'écran</h2>
-        <p class="sub">Ce que ça fait sur une année. Regarde ton chiffre dans les réglages de ton téléphone.</p>
-        <div class="val" id="scrVal"></div>
-        <input id="scr" type="range" min="0.5" max="10" step="0.5" value="3" aria-label="Heures d'écran par jour">
-        <div class="out" id="scrOut"></div>
-        <button class="btn sh" type="button" data-share="scrOut">Partager ce chiffre</button>
-      </div>
-
-      <div class="card tool">
-        <h2>Pause sans écran</h2>
-        <p class="sub">Pose le téléphone face cachée et fais une seule chose.</p>
-        <button class="btn primary sh" type="button" data-tool="focus" style="margin-top:0">Lancer un minuteur</button>
-      </div>
-
-      <div class="card">
-        <h2>Savoir en 30 secondes</h2>
-        <details class="tip"><summary>Pourquoi une pause aide</summary><p>Une courte pause permet souvent de revenir plus calme et plus clair. Même une minute de respiration lente peut suffire.</p></details>
-        <details class="tip"><summary>Une seule chose à la fois</summary><p>Faire plusieurs choses en même temps fatigue. Choisis une tâche, lance un minuteur, puis fais une pause.</p></details>
-        <details class="tip"><summary>Le téléphone dans une autre pièce</summary><p>Le laisser hors de vue pendant que tu travailles aide à rester concentré. Tu le retrouves à la pause.</p></details>
-        <details class="tip"><summary>Avant de dormir</summary><p>Éviter les écrans juste avant de se coucher aide souvent à mieux s'endormir. Un exercice de respiration peut les remplacer.</p></details>
-        <details class="tip"><summary>Comparer sur les réseaux</summary><p>Sur les réseaux, on voit les meilleurs moments des autres, pas leur quotidien. Si tu te sens mal après avoir scrollé, c'est le moment d'une pause.</p></details>
-        <details class="tip"><summary>En parler à quelqu'un</summary><p>Parler à un proche, à un professionnel de ton école ou de ton CFA, ou à une ligne d'écoute gratuite aide souvent plus qu'on ne le pense. Les numéros sont dans Réglages.</p></details>
-      </div>
-    </section>
-
     <!-- Onglet Réglages -->
     <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
@@ -345,7 +317,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
   <nav role="tablist" aria-label="Sections">
     <span class="thumb" id="thumb" aria-hidden="true"></span>
     <button id="t-reset" role="tab" aria-selected="true" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
-    <button id="t-screen" role="tab" aria-selected="false" data-tab="screen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Écran</button>
     <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
   <div class="toast" id="toast" role="status"></div>
@@ -447,24 +418,9 @@ nav button[aria-selected="true"]{color:var(--accent)}
   }
   document.querySelectorAll('[data-tool]').forEach(function(b){ b.addEventListener('click',function(){ var k=b.dataset.tool; if(k==='dump')toolDump(); else if(k==='ground')toolGround(); else toolFocus(); }); });
 
-  /* ---- Écran ---- */
-  function renderScreen(){
-    var sc=parseFloat($('scr').value)||0; $('scrVal').textContent=nf(sc,1)+' h par jour';
-    var yh=sc*365;
-    $('scrOut').innerHTML='<b>'+nf(yh/16)+' jours par an</b>'+nf(yh)+' h par an, soit '+nf(yh/16)+' jours éveillés (à 16 h d\u2019éveil par jour), ou '+nf(yh/35)+' semaines de travail à temps plein.';
-  }
-  $('scr').addEventListener('input',renderScreen);
-  document.querySelectorAll('[data-share]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var el=$(b.getAttribute('data-share')), txt=el.innerText.replace(/\n+/g,' · ')+' — Le Temps Réel : '+location.href.split('#')[0];
-      try{ if(navigator.share){ navigator.share({text:txt}).catch(function(){}); return; } }catch(e){}
-      try{ navigator.clipboard.writeText(txt).then(function(){toast('Texte copié.');}); }catch(e){ toast(txt); }
-    });
-  });
-
   /* ---- Onglets ---- */
   var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['reset','screen','set'], cur=-1;
+  var ORDER=['reset','set'], cur=-1;
   function show(name){
     var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
     ORDER.forEach(function(n){
@@ -495,7 +451,7 @@ nav button[aria-selected="true"]{color:var(--accent)}
 
   function sos(){ bOpen(60,'calme'); bStart(); }
   document.querySelectorAll('[data-sos]').forEach(function(b){ b.addEventListener('click',sos); });
-  function renderAll(){ renderScreen(); }
+  function renderAll(){}
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
   renderAll();
