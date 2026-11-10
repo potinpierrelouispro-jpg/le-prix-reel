@@ -1,23 +1,23 @@
 {
- "name": "Le Prix Réel",
- "short_name": "Prix Réel",
- "description": "Vois ce que tes achats coûtent en heures de travail.",
- "start_url": "./",
- "display": "standalone",
- "background_color": "#f3f5f8",
- "theme_color": "#2b3ff0",
- "lang": "fr",
- "icons": [
-  {
-   "src": "icon-192.png",
-   "sizes": "192x192",
-   "type": "image/png"
-  },
-  {
-   "src": "icon-512.png",
-   "sizes": "512x512",
-   "type": "image/png",
-   "purpose": "any"
-  }
- ]
+  "name": "Le Prix Réel",
+  "short_name": "Prix Réel",
+  "description": "Traduis tes dépenses en temps de travail et prends une pause pour te réinitialiser.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f8",
+  "theme_color": "#2b3ff0",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png?v=2",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
