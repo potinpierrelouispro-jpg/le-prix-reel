@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1620">
+<meta name="app-version" content="2026-11-10-1710">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,13 +116,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;border-radius:30px;
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:30px;
   background:color-mix(in srgb,var(--card) 62%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,#fff 55%,transparent);
   box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/3);border-radius:24px;
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:24px;
   background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
   transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
 nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 4px 8px;color:var(--mute);cursor:pointer;
@@ -136,6 +136,21 @@ nav button:active svg{transform:scale(.9)}
 main section.enter-r{animation:enterR .38s cubic-bezier(.22,1,.36,1)}
 main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
 @media (prefers-reduced-motion:reduce){nav .thumb,nav button,nav button svg{transition:none!important}main section{animation:none!important}}
+
+.tool h2{margin-bottom:4px}
+.tool .sub{font-size:13px;color:var(--mute);margin:0 0 12px}
+.tool .out{background:var(--accent-soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:15px}
+.tool .out b{font:800 24px/1.15 var(--display);display:block;font-variant-numeric:tabular-nums}
+.tool input[type=range]{width:100%;accent-color:var(--accent)}
+.tool .val{font:800 26px/1.1 var(--display);margin:0 0 4px;font-variant-numeric:tabular-nums}
+.tool .sh{margin-top:10px;width:100%}
+details.tip{border-top:1px solid var(--line);padding:10px 0}
+details.tip:first-of-type{border-top:0}
+details.tip summary{cursor:pointer;font-weight:600;list-style:none}
+details.tip summary::-webkit-details-marker{display:none}
+details.tip summary::after{content:'+';float:right;color:var(--accent);font-weight:800}
+details.tip[open] summary::after{content:'–'}
+details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 </style>
 </head>
 <body>
@@ -194,6 +209,60 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
       </div>
     </section>
 
+    <!-- Onglet Explorer -->
+    <section id="tab-explore" role="tabpanel" aria-labelledby="t-explore" hidden style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tool">
+        <h2>Ton temps d'écran</h2>
+        <p class="sub">Ce que ça fait sur une année.</p>
+        <div class="val" id="scrVal"></div>
+        <input id="scr" type="range" min="0.5" max="10" step="0.5" value="3" aria-label="Heures d'écran par jour">
+        <div class="out" id="scrOut"></div>
+        <button class="btn sh" type="button" data-share="scrOut">Partager ce chiffre</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Abonnements et paiements en plusieurs fois</h2>
+        <p class="sub">Additionne ce qui part chaque mois sans que tu y penses.</p>
+        <label for="sub">Total par mois (€)</label>
+        <input id="sub" type="text" inputmode="decimal" autocomplete="off" value="30">
+        <div class="out" id="subOut"></div>
+        <button class="btn sh" type="button" data-share="subOut">Partager ce chiffre</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Ton loyer en heures de travail</h2>
+        <p class="sub">Pour voir ce que le logement prend dans ton mois.</p>
+        <label for="rent">Loyer et charges par mois (€)</label>
+        <input id="rent" type="text" inputmode="decimal" autocomplete="off" value="600">
+        <div class="out" id="rentOut"></div>
+        <button class="btn sh" type="button" data-share="rentOut">Partager ce chiffre</button>
+      </div>
+
+      <div class="card tool">
+        <h2>Mettre de côté</h2>
+        <p class="sub">Combien de travail tu gardes en épargnant un peu chaque mois.</p>
+        <label for="sav">Par mois (€)</label>
+        <input id="sav" type="text" inputmode="decimal" autocomplete="off" value="50">
+        <div class="out" id="savOut"></div>
+        <button class="btn sh" type="button" data-share="savOut">Partager ce chiffre</button>
+      </div>
+
+      <div class="card">
+        <h2>Savoir en 30 secondes</h2>
+        <details class="tip"><summary>Payer en plusieurs fois, c'est quoi ?</summary><p>C'est un crédit : tu reçois l'achat maintenant et tu paies après. Le prix ne baisse pas, tu le sens juste plus tard. Chaque mensualité est du travail déjà promis.</p></details>
+        <details class="tip"><summary>Pourquoi les petits abonnements comptent</summary><p>Un abonnement de 10 € par mois fait 120 € par an. Plusieurs abonnements oubliés peuvent représenter une journée de travail ou plus chaque mois.</p></details>
+        <details class="tip"><summary>Se payer en premier</summary><p>Une méthode simple : dès que ton salaire arrive, tu mets une petite somme de côté, puis tu dépenses ce qu'il reste. Même 20 € par mois, ça devient une habitude.</p></details>
+        <details class="tip"><summary>Acheter pour suivre les autres</summary><p>Sur les réseaux, on voit les achats, pas les comptes. Se demander « est-ce que j'en ai envie, ou est-ce que je suis les autres ? » aide. Le bouton « Me le rappeler dans 48 h » est fait pour ça.</p></details>
+        <details class="tip"><summary>Parler d'argent avec quelqu'un</summary><p>En cas de doute (banque, crédit, loyer), tu peux poser tes questions à ta banque, à un conseiller de ton école ou de ton CFA, ou au Point Conseil Budget de ta ville : ils sont gratuits.</p></details>
+      </div>
+
+      <div class="card">
+        <h2>Besoin d'en parler ?</h2>
+        <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
+        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> : <a href="tel:0974751313">09 74 75 13 13</a></p>
+      </div>
+    </section>
+
     <!-- Onglet Semaine -->
     <section id="tab-week" role="tabpanel" aria-labelledby="t-week" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="note" id="exampleNote">
@@ -245,6 +314,7 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
   <nav role="tablist" aria-label="Sections">
     <span class="thumb" id="thumb" aria-hidden="true"></span>
     <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>Calculer</button>
+    <button id="t-explore" role="tab" aria-selected="false" data-tab="explore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Explorer</button>
     <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Ma semaine</button>
     <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
@@ -419,14 +489,14 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   bindSetting('net','net'); bindSetting('hrs','hours');
 
   function renderAll(keepInputs){
-    renderSettings(); renderResult(); renderWishes(); renderWeek();
+    renderSettings(); renderResult(); renderWishes(); renderWeek(); renderExplore();
     if(!keepInputs){ $('net').value=state.net>0?String(state.net).replace('.',','):''; $('hrs').value=String(state.hours).replace('.',','); }
     var rr=$('rateRange'); if(rr){ rr.value=rate(); $('rateRangeVal').textContent=euro(rate()); }
   }
 
   /* ---- Onglets ---- */
   var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['calc','week','set'], cur=-1;
+  var ORDER=['calc','explore','week','set'], cur=-1;
   function show(name){
     var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
     ORDER.forEach(function(n){
@@ -492,6 +562,30 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
     });
   });
 
+
+  /* ---- Explorer ---- */
+  function nf(x,d){ return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d||0}).format(x); }
+  function renderExplore(){
+    var r=rate(), mh=151.67;
+    var sc=num($('scr').value)||0; $('scrVal').textContent=nf(sc,1)+' h par jour';
+    var yh=sc*365;
+    $('scrOut').innerHTML='<b>'+nf(yh/16)+' jours par an</b>'+nf(yh)+' h par an, soit '+nf(yh/16)+' jours éveillés (à 16 h d\u2019éveil par jour), ou '+nf(yh/35)+' semaines de travail à temps plein.';
+    var sb=num($('sub').value);
+    if(sb>=0&&r>0){ var hm=sb/r; $('subOut').innerHTML='<b>'+fmtH(hm)+' de travail par mois</b>'+euro(sb*12)+' par an, soit '+nf(hm*12)+' h de travail sur l\u2019année (≈ '+nf(hm*12/WORKDAY,1)+' jours).'; } else $('subOut').textContent='Entre un montant.';
+    var rt=num($('rent').value);
+    if(rt>0&&r>0){ var hr=rt/r, inc=r*mh, ok=inc>=3*rt;
+      $('rentOut').innerHTML='<b>'+fmtH(hr)+' de travail par mois</b>'+nf(hr/mh*100)+' % d\u2019un mois de travail de '+nf(mh)+' h. Revenu estimé avec ton taux : '+euro(inc)+' par mois. Les propriétaires demandent souvent un revenu d\u2019au moins 3 fois le loyer, soit '+euro(rt*3)+' ici'+(ok?' : tu es au-dessus.':'.'); } else $('rentOut').textContent='Entre un loyer.';
+    var sv=num($('sav').value);
+    if(sv>=0&&r>0){ $('savOut').innerHTML='<b>'+euro(sv*12)+' en 1 an</b>'+nf(sv*12/r)+' h de travail gardées en 1 an, '+euro(sv*60)+' en 5 ans ('+nf(sv*60/r)+' h). Sans intérêts, juste ce que tu mets de côté.'; } else $('savOut').textContent='Entre un montant.';
+  }
+  ['scr','sub','rent','sav'].forEach(function(id){ $(id).addEventListener('input',renderExplore); });
+  document.querySelectorAll('[data-share]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var el=$(b.getAttribute('data-share')), txt=el.innerText.replace(/\n+/g,' · ')+' — Le Prix Réel : '+location.href.split('#')[0];
+      try{ if(navigator.share){ navigator.share({text:txt}).catch(function(){}); return; } }catch(e){}
+      try{ navigator.clipboard.writeText(txt).then(function(){toast('Texte copié.');}); }catch(e){ toast(txt); }
+    });
+  });
 
   state=load();
   renderCats();
