@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1710">
+<meta name="app-version" content="2026-11-10-1740">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -243,6 +243,8 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
         <p class="sub">Combien de travail tu gardes en épargnant un peu chaque mois.</p>
         <label for="sav">Par mois (€)</label>
         <input id="sav" type="text" inputmode="decimal" autocomplete="off" value="50">
+        <label for="goal" style="margin-top:12px">Un objectif à atteindre (€, facultatif)</label>
+        <input id="goal" type="text" inputmode="decimal" autocomplete="off" placeholder="Permis, voyage, voiture…">
         <div class="out" id="savOut"></div>
         <button class="btn sh" type="button" data-share="savOut">Partager ce chiffre</button>
       </div>
@@ -259,7 +261,7 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
       <div class="card">
         <h2>Besoin d'en parler ?</h2>
         <p class="help" style="margin-top:0">L'appli ne remplace pas une vraie écoute. Si ça ne va pas, ces services sont gratuits et confidentiels :</p>
-        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> : <a href="tel:0974751313">09 74 75 13 13</a></p>
+        <p class="help"><b>Fil Santé Jeunes</b> (12-25 ans, tous les jours de 9 h à 23 h) : <a href="tel:0800235236">0 800 235 236</a><br><b>3114</b> (prévention du suicide, 24 h sur 24) : <a href="tel:3114">3114</a><br><b>Joueurs Info Service</b> (tous les jours de 8 h à 2 h) : <a href="tel:0974751313">09 74 75 13 13</a></p>
       </div>
     </section>
 
@@ -276,6 +278,7 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
           <div class="tile"><div class="v" id="wkKept">0 h</div><div class="k">laissées de côté</div></div>
         </div>
         <p class="help" id="wkDays"></p>
+        <p class="help" id="wkAll"></p>
       </div>
       <div class="card">
         <h2>Où part ton temps de travail</h2>
@@ -443,6 +446,8 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
     $('wkTotal').textContent=fmtShort(total);
     $('wkKept').textContent=fmtShort(kept);
     $('wkDays').textContent = total>0 ? eqText(total) : '';
+    var allKept=state.kept.reduce(function(s2,x){return s2+toHours(x.amt);},0);
+    $('wkAll').textContent = state.kept.length ? 'Depuis le début : '+fmtH(allKept)+' de travail gardées ('+state.kept.length+' achat'+(state.kept.length>1?'s':'')+' laissé'+(state.kept.length>1?'s':'')+' de côté).' : '';
     var by={}; CATS.forEach(function(c){by[c]=0;});
     wk.forEach(function(x){ by[x.cat]=(by[x.cat]||0)+toHours(x.amt); });
     var max=Math.max.apply(null,CATS.map(function(c){return by[c];}).concat([0.0001]));
@@ -575,10 +580,12 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
     var rt=num($('rent').value);
     if(rt>0&&r>0){ var hr=rt/r, inc=r*mh, ok=inc>=3*rt;
       $('rentOut').innerHTML='<b>'+fmtH(hr)+' de travail par mois</b>'+nf(hr/mh*100)+' % d\u2019un mois de travail de '+nf(mh)+' h. Revenu estimé avec ton taux : '+euro(inc)+' par mois. Les propriétaires demandent souvent un revenu d\u2019au moins 3 fois le loyer, soit '+euro(rt*3)+' ici'+(ok?' : tu es au-dessus.':'.'); } else $('rentOut').textContent='Entre un loyer.';
-    var sv=num($('sav').value);
-    if(sv>=0&&r>0){ $('savOut').innerHTML='<b>'+euro(sv*12)+' en 1 an</b>'+nf(sv*12/r)+' h de travail gardées en 1 an, '+euro(sv*60)+' en 5 ans ('+nf(sv*60/r)+' h). Sans intérêts, juste ce que tu mets de côté.'; } else $('savOut').textContent='Entre un montant.';
+    var sv=num($('sav').value), gl=num($('goal').value), goalTxt='';
+    if(gl>0&&sv>0&&r>0){ var mo=Math.ceil(gl/sv), y=Math.floor(mo/12), m2=mo%12;
+      goalTxt=' Pour '+euro(gl)+' ('+fmtH(gl/r)+' de travail), il te faut '+mo+' mois'+(y>0?' (≈ '+y+' an'+(y>1?'s':'')+(m2?' et '+m2+' mois':'')+')':'')+' à '+euro(sv)+' par mois.'; }
+    if(sv>=0&&r>0){ $('savOut').innerHTML='<b>'+euro(sv*12)+' en 1 an</b>'+nf(sv*12/r)+' h de travail gardées en 1 an, '+euro(sv*60)+' en 5 ans ('+nf(sv*60/r)+' h). Sans intérêts, juste ce que tu mets de côté.'+goalTxt; } else $('savOut').textContent='Entre un montant.';
   }
-  ['scr','sub','rent','sav'].forEach(function(id){ $(id).addEventListener('input',renderExplore); });
+  ['scr','sub','rent','sav','goal'].forEach(function(id){ $(id).addEventListener('input',renderExplore); });
   document.querySelectorAll('[data-share]').forEach(function(b){
     b.addEventListener('click',function(){
       var el=$(b.getAttribute('data-share')), txt=el.innerText.replace(/\n+/g,' · ')+' — Le Prix Réel : '+location.href.split('#')[0];
