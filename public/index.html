@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1740">
+<meta name="app-version" content="2026-11-10-1810">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -151,6 +151,22 @@ details.tip summary::-webkit-details-marker{display:none}
 details.tip summary::after{content:'+';float:right;color:var(--accent);font-weight:800}
 details.tip[open] summary::after{content:'–'}
 details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
+
+#pause{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;
+  background:radial-gradient(90% 60% at 50% 35%,var(--glow) 0%,transparent 70%),var(--bg)}
+#pause.on{display:flex}
+#pause .x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;border:0;background:var(--card);border:1px solid var(--line);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
+#pause h2{font:800 28px/1.1 var(--display);margin:0 0 6px}
+#pause .sub{color:var(--mute);margin:0 0 26px;max-width:320px}
+.orb-wrap{width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin:6px 0 18px}
+.orb{width:210px;height:210px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0%,var(--accent) 70%);opacity:.9;transform:scale(.55);box-shadow:0 20px 60px -10px var(--accent)}
+.orb.run{animation:breathe 10s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.55)}50%{transform:scale(1)}}
+#pause .phase{font:800 30px/1.1 var(--display);min-height:34px}
+#pause .time{color:var(--mute);font-variant-numeric:tabular-nums;margin:6px 0 20px;min-height:24px}
+#pause .btn{min-width:220px}
+#pause .done{max-width:340px;color:var(--mute);font-size:15px}
+@media (prefers-reduced-motion:reduce){.orb.run{animation:none;transform:scale(.8)}}
 </style>
 </head>
 <body>
@@ -176,6 +192,7 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
         <p class="eq" id="eqText"></p>
         <div class="actions">
           <button class="btn primary" id="btnImg" type="button">Partager en image</button>
+          <button class="btn ghost" type="button" data-pause="60">Respirer 1 minute avant de décider</button>
           <details class="trace">
             <summary>Garder une trace (facultatif)</summary>
             <div class="actions" style="margin-top:10px">
@@ -211,6 +228,13 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 
     <!-- Onglet Explorer -->
     <section id="tab-explore" role="tabpanel" aria-labelledby="t-explore" hidden style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tool">
+        <h2>Réinitialiser ta tête</h2>
+        <p class="sub">Une pause guidée pour te calmer avant de décider, ou quand l'écran t'a trop pris.</p>
+        <button class="btn primary sh" type="button" data-pause="60" style="margin-top:0">Pause de 1 minute</button>
+        <button class="btn sh" type="button" data-pause="180">Pause de 3 minutes</button>
+      </div>
+
       <div class="card tool">
         <h2>Ton temps d'écran</h2>
         <p class="sub">Ce que ça fait sur une année.</p>
@@ -325,6 +349,16 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 </div>
 
 
+<div id="pause" role="dialog" aria-modal="true" aria-label="Pause respiration">
+  <button class="x" id="pauseX" type="button" aria-label="Fermer">×</button>
+  <h2>Pause</h2>
+  <p class="sub" id="pauseSub">Respirer lentement aide souvent à redescendre. Suis le cercle : 5 secondes pour inspirer, 5 pour expirer.</p>
+  <div class="orb-wrap"><div class="orb" id="orb"></div></div>
+  <div class="phase" id="pausePhase"></div>
+  <div class="time" id="pauseTime"></div>
+  <button class="btn primary" id="pauseGo" type="button">Commencer</button>
+  <p class="done" id="pauseDone" hidden>C'est fini. Pour aller plus loin : nomme 5 choses que tu vois, 4 que tu touches, 3 que tu entends, 2 que tu sens, 1 que tu goûtes. Puis reviens à ta décision quand tu veux.</p>
+</div>
 <div id="installBar" role="dialog" aria-label="Installer l'appli">
   <b>Installer Le Prix Réel</b>
   <div id="installMsg"></div>
@@ -593,6 +627,30 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
       try{ navigator.clipboard.writeText(txt).then(function(){toast('Texte copié.');}); }catch(e){ toast(txt); }
     });
   });
+
+  /* ---- Pause respiration ---- */
+  (function(){
+    var box=$('pause'),orb=$('orb'),ph=$('pausePhase'),tm=$('pauseTime'),go=$('pauseGo'),dn=$('pauseDone'),sub=$('pauseSub'),dur=60,timer=null,left=0;
+    function fmt(t){ var m=Math.floor(t/60), r=t%60; return m+':'+(r<10?'0':'')+r; }
+    function stop(){ clearInterval(timer); timer=null; orb.classList.remove('run'); }
+    function open(d){ dur=d; left=d; stop(); dn.hidden=false; dn.hidden=true; sub.hidden=false; ph.textContent=''; tm.textContent=fmt(d); go.textContent='Commencer'; go.hidden=false; box.classList.add('on'); }
+    function close(){ stop(); box.classList.remove('on'); }
+    function finish(){ stop(); ph.textContent='Bien joué.'; tm.textContent=''; dn.hidden=false; sub.hidden=true; go.textContent='Terminer'; go.hidden=false; go.onclick=close; }
+    function start(){
+      go.hidden=true; dn.hidden=true; left=dur; var el=0;
+      orb.classList.remove('run'); void orb.offsetWidth; orb.classList.add('run');
+      ph.textContent='Inspire…'; tm.textContent=fmt(left);
+      timer=setInterval(function(){
+        el++; left--; tm.textContent=fmt(Math.max(left,0));
+        ph.textContent=(Math.floor(el/5)%2===0)?'Inspire…':'Expire…';
+        if(left<=0) finish();
+      },1000);
+    }
+    go.addEventListener('click',function(){ if(go.textContent==='Commencer') start(); });
+    $('pauseX').addEventListener('click',close);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+    document.querySelectorAll('[data-pause]').forEach(function(b){ b.addEventListener('click',function(){ go.onclick=null; open(parseInt(b.getAttribute('data-pause'),10)); }); });
+  })();
 
   state=load();
   renderCats();
