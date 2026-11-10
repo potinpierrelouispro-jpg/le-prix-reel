@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2130">
+<meta name="app-version" content="2026-11-10-2200">
 
 <style>
 /* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
@@ -114,13 +114,13 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:30px;
+  width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;border-radius:30px;
   background:color-mix(in srgb,var(--card) 62%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
   border:1px solid color-mix(in srgb,#fff 55%,transparent);
   box-shadow:0 10px 30px -8px rgba(20,32,43,.28),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dark"] nav,:root:not([data-theme="light"]) nav{border-color:color-mix(in srgb,#fff 14%,transparent);box-shadow:0 10px 30px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
-nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:24px;
+nav .thumb{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/3);border-radius:24px;
   background:var(--accent-soft);box-shadow:0 2px 8px -2px rgba(43,63,240,.25);
   transition:transform .42s cubic-bezier(.34,1.4,.5,1)}
 nav button{position:relative;z-index:1;border:0;background:transparent;padding:9px 2px 8px;color:var(--mute);cursor:pointer;
@@ -322,31 +322,12 @@ nav button[aria-selected="true"]{color:var(--accent)}
       </div>
     </section>
 
-    <!-- Onglet Semaine -->
-    <section id="tab-week" role="tabpanel" aria-labelledby="t-week" hidden style="display:flex;flex-direction:column;gap:14px">
-      <div class="card">
-        <h2>Les 7 derniers jours</h2>
-        <div class="tiles">
-          <div class="tile"><div class="v" id="wkBreath">0</div><div class="k">pauses de respiration</div></div>
-          <div class="tile"><div class="v" id="wkFocus">0 min</div><div class="k">de concentration</div></div>
-          <div class="tile"><div class="v" id="wkGround">0</div><div class="k">retours ici et maintenant</div></div>
-          <div class="tile"><div class="v" id="wkDump">0</div><div class="k">têtes vidées</div></div>
-        </div>
-        <p class="help" id="wkMsg"></p>
-      </div>
-    </section>
-
     <!-- Onglet Réglages -->
     <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
         <h2>Installer et partager</h2>
         <p class="help" style="margin-top:0"><b>iPhone</b> : ouvre le lien dans Safari, touche Partager, puis « Sur l'écran d'accueil ».<br><b>Android</b> : menu du navigateur, puis « Installer l'application ».</p>
         <button class="btn primary" id="btnShare" type="button" style="width:100%;margin-top:12px">Partager l'appli</button>
-      </div>
-      <div class="card">
-        <h2>Tes données</h2>
-        <p class="help" style="margin-top:0">Tes statistiques restent sur ton téléphone. Tu peux tout effacer.</p>
-        <button class="btn" id="btnWipe" type="button" style="width:100%;margin-top:12px">Effacer mes données</button>
       </div>
       <div class="card" id="helpCard">
         <h2>Numéros utiles</h2>
@@ -365,7 +346,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
     <span class="thumb" id="thumb" aria-hidden="true"></span>
     <button id="t-reset" role="tab" aria-selected="true" data-tab="reset" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></svg>Reset</button>
     <button id="t-screen" role="tab" aria-selected="false" data-tab="screen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Écran</button>
-    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Semaine</button>
     <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>Réglages</button>
   </nav>
   <div class="toast" id="toast" role="status"></div>
@@ -404,7 +384,7 @@ nav button[aria-selected="true"]{color:var(--accent)}
   function nf(x,d){ return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d||0}).format(x); }
   var toastTimer;
   function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('on');},2200); }
-  function logEv(k,v){ state.ev=(state.ev||[]).concat([{t:Date.now(),k:k,v:v||0}]).slice(-400); save(); renderWeek(); }
+  function logEv(){}
 
   /* ---- Respiration (rythmes) ---- */
   var RH={calme:{n:'Calme 5-5',p:[['Inspire…',5,1],['Expire…',5,.55]]},carre:{n:'Carré 4-4-4-4',p:[['Inspire…',4,1],['Retiens…',4,1],['Expire…',4,.55],['Retiens…',4,.55]]},r478:{n:'4-7-8',p:[['Inspire…',4,1],['Retiens…',7,1],['Expire…',8,.55]]}};
@@ -467,15 +447,6 @@ nav button[aria-selected="true"]{color:var(--accent)}
   }
   document.querySelectorAll('[data-tool]').forEach(function(b){ b.addEventListener('click',function(){ var k=b.dataset.tool; if(k==='dump')toolDump(); else if(k==='ground')toolGround(); else toolFocus(); }); });
 
-  /* ---- Semaine ---- */
-  function renderWeek(){
-    var since=Date.now()-7*DAY, ev=(state.ev||[]).filter(function(e){return e.t>=since;});
-    function cnt(k){ return ev.filter(function(e){return e.k===k;}).length; }
-    var focus=ev.filter(function(e){return e.k==='focus';}).reduce(function(s,e){return s+e.v;},0);
-    $('wkBreath').textContent=cnt('breath'); $('wkFocus').textContent=nf(focus)+' min'; $('wkGround').textContent=cnt('ground'); $('wkDump').textContent=cnt('dump');
-    $('wkMsg').textContent = ev.length ? '' : 'Rien pour l\u2019instant. Fais une pause dans l\u2019onglet Reset et elle apparaîtra ici.';
-  }
-
   /* ---- Écran ---- */
   function renderScreen(){
     var sc=parseFloat($('scr').value)||0; $('scrVal').textContent=nf(sc,1)+' h par jour';
@@ -493,7 +464,7 @@ nav button[aria-selected="true"]{color:var(--accent)}
 
   /* ---- Onglets ---- */
   var tabs=document.querySelectorAll('nav [role=tab]');
-  var ORDER=['reset','screen','week','set'], cur=-1;
+  var ORDER=['reset','screen','set'], cur=-1;
   function show(name){
     var idx=ORDER.indexOf(name), dir=idx>=cur?'enter-r':'enter-l', first=cur<0;
     ORDER.forEach(function(n){
@@ -521,15 +492,10 @@ nav button[aria-selected="true"]{color:var(--accent)}
     function copy(){ try{ navigator.clipboard.writeText(url).then(function(){toast('Lien copié.');},function(){toast(url);}); }catch(e){ toast(url); } }
     try{ if(navigator.share){ navigator.share(data).catch(function(){}); } else { copy(); } }catch(e){ copy(); }
   });
-  $('btnWipe').addEventListener('click',function(){
-    if(!confirm('Effacer toutes tes données sur cet appareil ?')) return;
-    try{ localStorage.removeItem(KEY); }catch(e){}
-    state=load(); renderAll(); toast('Données effacées.');
-  });
 
   function sos(){ bOpen(60,'calme'); bStart(); }
   document.querySelectorAll('[data-sos]').forEach(function(b){ b.addEventListener('click',sos); });
-  function renderAll(){ renderWeek(); renderScreen(); }
+  function renderAll(){ renderScreen(); }
   state=load();
   try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
   renderAll();
