@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1555">
+<meta name="app-version" content="2026-11-10-1620">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,6 +77,14 @@ input[type=text],input[type=number],input[type=search]{width:100%;padding:12px 1
 .btn:active{transform:scale(.98)}
 .help{font-size:13px;color:var(--mute);margin:10px 0 0}
 .help a{color:var(--accent)}
+details.trace{margin-top:4px}
+details.trace2 summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+details.trace2 summary::-webkit-details-marker{display:none}
+details.trace2 summary::after{content:'+';float:right;color:var(--accent);font-weight:800}
+details.trace2[open] summary::after{content:'–'}
+details.trace summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;padding:8px 2px;list-style:none;text-align:center}
+details.trace summary::-webkit-details-marker{display:none}
+input[type=range]{height:32px}
 h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .row:first-of-type{border-top:0}
@@ -106,11 +114,6 @@ h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
 #installBar button{flex:1;border:0;border-radius:10px;padding:10px;font-size:15px;font-weight:600;cursor:pointer}
 #installBar .go{background:#fff;color:#2b3ff0}
 #installBar .no{background:rgba(255,255,255,.18);color:#fff}
-#onb{position:fixed;inset:0;z-index:60;background:var(--bg);display:none;overflow-y:auto}
-#onb .in{max-width:480px;margin:0 auto;padding:40px 20px 30px}
-#onb h2{font:800 30px/1.1 var(--display);margin:0 0 10px}
-#onb p{color:var(--mute);margin:0 0 20px}
-#onb .btn{width:100%;margin-top:10px}
 /* Barre d'onglets flottante, effet verre, pastille qui glisse (style iOS récent) */
 nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
   width:calc(min(480px,100%) - 28px);z-index:40;display:grid;grid-template-columns:repeat(3,1fr);padding:6px;border-radius:30px;
@@ -147,11 +150,9 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
     <section id="tab-calc" role="tabpanel" aria-labelledby="t-calc" style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
         <label for="amount">Prix (en €)</label>
-        <input id="amount" class="amount" type="text" inputmode="decimal" autocomplete="off" value="80">
-        <div class="lbl" style="margin-top:14px">Catégorie</div>
-        <div class="chips" id="cats" role="group" aria-label="Catégorie"></div>
-        <label for="what" style="margin-top:14px">C'est pour quoi ? (facultatif)</label>
-        <input id="what" type="text" autocomplete="off" placeholder="Une veste, un resto, une sortie…">
+        <input id="amount" class="amount" type="text" inputmode="decimal" autocomplete="off" value="12">
+        <div class="lbl" style="margin-top:12px">Un exemple en un geste</div>
+        <div class="chips" id="quick"></div>
       </div>
 
       <div class="card result" aria-live="polite">
@@ -159,15 +160,35 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
         <div class="big" id="bigHours">—</div>
         <p class="eq" id="eqText"></p>
         <div class="actions">
-          <button class="btn primary" id="btnSpend" type="button">Je le dépense</button>
-          <button class="btn" id="btnWait" type="button">Me le rappeler dans 48 h</button>
-          <button class="btn ghost" id="btnSkip" type="button">Je laisse de côté</button>
-          <button class="btn ghost" id="btnImg" type="button">Partager ce résultat en image</button>
+          <button class="btn primary" id="btnImg" type="button">Partager en image</button>
+          <details class="trace">
+            <summary>Garder une trace (facultatif)</summary>
+            <div class="actions" style="margin-top:10px">
+              <button class="btn" id="btnSpend" type="button">Je le dépense</button>
+              <button class="btn" id="btnWait" type="button">Me le rappeler dans 48 h</button>
+              <button class="btn ghost" id="btnSkip" type="button">Je laisse de côté</button>
+            </div>
+          </details>
         </div>
         <p class="help" id="gamingHelp" hidden>Besoin d'en parler ? Joueurs Info Service : <a href="tel:0974751313">09 74 75 13 13</a> (service national d'aide, appel non surtaxé).</p>
       </div>
 
-      <div class="card" id="wishCard">
+      <details class="card trace2">
+        <summary>Préciser : catégorie et intitulé</summary>
+        <div class="lbl" style="margin-top:14px">Catégorie</div>
+        <div class="chips" id="cats" role="group" aria-label="Catégorie"></div>
+        <label for="what" style="margin-top:14px">C'est pour quoi ? (facultatif)</label>
+        <input id="what" type="text" autocomplete="off" placeholder="Une veste, un resto, une sortie…">
+      </details>
+
+      <div class="card">
+        <label for="rateRange">Ton heure de travail vaut</label>
+        <div class="big" style="font-size:34px" id="rateRangeVal"></div>
+        <input id="rateRange" type="range" min="5" max="60" step="0.5" style="width:100%;accent-color:var(--accent)">
+        <p class="help">Glisse pour régler. Pour un calcul exact, entre ton salaire dans Réglages.</p>
+      </div>
+
+      <div class="card" id="wishCard" hidden>
         <h2>Mes envies en attente</h2>
         <div id="wishList"></div>
       </div>
@@ -200,7 +221,8 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
     <!-- Onglet Réglages -->
     <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
-        <h2>Ce que vaut ton heure</h2>
+        <h2>Calcul exact (facultatif)</h2>
+        <p class="help" style="margin:0 0 12px">Entre ton salaire pour remplacer le curseur par ton vrai taux horaire.</p>
         <label for="net">Salaire net par mois (€)</label>
         <input id="net" type="text" inputmode="decimal" autocomplete="off">
         <label for="hrs" style="margin-top:14px">Heures travaillées par mois</label>
@@ -230,20 +252,6 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
 </div>
 
 
-<div id="onb" role="dialog" aria-modal="true" aria-label="Bienvenue">
-  <div class="in">
-    <h2>Combien vaut ton heure ?</h2>
-    <p>Le Prix Réel traduit un prix en heures de travail. Pour ça, il a besoin de deux chiffres. Ils restent sur ton téléphone.</p>
-    <label for="onbNet">Salaire net par mois (€)</label>
-    <input id="onbNet" type="text" inputmode="decimal" autocomplete="off" placeholder="1000">
-    <label for="onbHrs" style="margin-top:14px">Heures travaillées par mois</label>
-    <input id="onbHrs" type="text" inputmode="decimal" autocomplete="off" value="151,67">
-    <p class="help">35 h par semaine, c'est environ 152 h par mois. Compte seulement le temps en entreprise.</p>
-    <p class="eq" style="margin:14px 0 0"><b id="onbRate"></b></p>
-    <button class="btn primary" id="onbGo" type="button">Commencer</button>
-    <button class="btn ghost" id="onbSkip" type="button">Passer pour l'instant</button>
-  </div>
-</div>
 <div id="installBar" role="dialog" aria-label="Installer l'appli">
   <b>Installer Le Prix Réel</b>
   <div id="installMsg"></div>
@@ -257,25 +265,16 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
 
   function seed(){
     var n=Date.now();
-    return {net:1000,hours:151.67,
-      log:[
-        {id:1,label:'Une veste',cat:'Vêtements & beauté',amt:79,t:n-1*DAY,ex:1},
-        {id:2,label:'Resto entre amis',cat:'Sorties',amt:32,t:n-2*DAY,ex:1},
-        {id:3,label:'Courses de la semaine',cat:'Essentiel',amt:48,t:n-3*DAY,ex:1},
-        {id:4,label:'Maquillage',cat:'Vêtements & beauté',amt:24,t:n-4*DAY,ex:1},
-        {id:5,label:'Abonnement streaming',cat:'Plaisir',amt:13,t:n-5*DAY,ex:1}
-      ],
-      kept:[{id:6,label:'Baskets',cat:'Vêtements & beauté',amt:110,t:n-2*DAY,ex:1}],
-      wishes:[{id:7,label:'Casque audio',cat:'Plaisir',amt:129,due:n+30*3600000,ex:1}]};
+    return {hourly:10,net:0,hours:151.67,log:[],kept:[],wishes:[]};
   }
   function load(){
-    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log){o.onboarded=true; return o;}}}catch(e){}
+    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log){ if(!(o.hourly>0)) o.hourly=(o.hours>0&&o.net>0)?o.net/o.hours:10; return o;}}}catch(e){}
     return seed();
   }
   function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
 
   function num(v){ var x=parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(x)?x:NaN; }
-  function rate(){ return state.hours>0 ? state.net/state.hours : 0; }
+  function rate(){ return state.hourly>0 ? state.hourly : 0; }
   function euro(x){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(x); }
   function fmtH(h){
     var m=Math.round(h*60), hh=Math.floor(m/60), mm=m%60;
@@ -302,6 +301,15 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
       var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=c;
       b.setAttribute('aria-pressed', c===cat?'true':'false');
       b.addEventListener('click',function(){ cat=c; renderCats(); renderResult(); });
+      box.appendChild(b);
+    });
+  }
+  var QUICK=[{l:'Café',a:3,c:'Plaisir'},{l:'Fast-food',a:12,c:'Plaisir'},{l:'Sortie entre amis',a:40,c:'Sorties'},{l:'Sneakers',a:120,c:'Vêtements & beauté'},{l:'Pari ou jeu',a:20,c:'Jeux d\'argent'}];
+  function renderQuick(){
+    var box=$('quick'); box.innerHTML='';
+    QUICK.forEach(function(q){
+      var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=q.l+' · '+q.a+' €';
+      b.addEventListener('click',function(){ $('amount').value=String(q.a); $('what').value=q.l; cat=q.c; renderCats(); renderResult(); });
       box.appendChild(b);
     });
   }
@@ -334,7 +342,7 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
 
   function renderWishes(){
     var box=$('wishList'), now=Date.now();
-    if(!state.wishes.length){ box.innerHTML='<p class="empty">Rien en attente. Utilise « Me le rappeler dans 48 h » avant un achat.</p>'; return; }
+$('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHTML=''; return; }
     box.innerHTML='';
     state.wishes.forEach(function(w){
       var rem=w.due-now, status = rem<=0 ? 'Prêt à décider' : 'Dans '+Math.ceil(rem/3600000)+' h';
@@ -402,17 +410,18 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
     $('rateTop').textContent = r>0 ? 'Ton heure : '+euro(r) : '';
     $('rateBig').textContent = r>0 ? 'Ton heure de travail vaut '+euro(r)+'.' : 'Renseigne ton salaire et tes heures.';
   }
-  $('net').value=''; $('hrs').value='';
   function bindSetting(id,key){
     $(id).addEventListener('input',function(){
-      var v=num($(id).value); if(v>0){ state[key]=v; save(); renderAll(true); }
+      var v=num($(id).value); if(v>0){ state[key]=v; if(state.net>0&&state.hours>0) state.hourly=state.net/state.hours; save(); renderAll(true); }
     });
   }
+  $('rateRange').addEventListener('input',function(){ var v=num(this.value); if(v>0){ state.hourly=v; save(); renderAll(true); } });
   bindSetting('net','net'); bindSetting('hrs','hours');
 
   function renderAll(keepInputs){
     renderSettings(); renderResult(); renderWishes(); renderWeek();
-    if(!keepInputs){ $('net').value=String(state.net).replace('.',','); $('hrs').value=String(state.hours).replace('.',','); }
+    if(!keepInputs){ $('net').value=state.net>0?String(state.net).replace('.',','):''; $('hrs').value=String(state.hours).replace('.',','); }
+    var rr=$('rateRange'); if(rr){ rr.value=rate(); $('rateRangeVal').textContent=euro(rate()); }
   }
 
   /* ---- Onglets ---- */
@@ -483,22 +492,12 @@ main section.enter-l{animation:enterL .38s cubic-bezier(.22,1,.36,1)}
     });
   });
 
-  /* ---- Première ouverture ---- */
-  function onbRender(){ var n=num($('onbNet').value),h=num($('onbHrs').value); $('onbRate').textContent=(n>0&&h>0)?'Ton heure de travail vaut '+euro(n/h)+'.':''; }
-  $('onbNet').addEventListener('input',onbRender); $('onbHrs').addEventListener('input',onbRender);
-  function onbClose(){ state.onboarded=true; save(); $('onb').style.display='none'; renderAll(); }
-  $('onbGo').addEventListener('click',function(){
-    var n=num($('onbNet').value),h=num($('onbHrs').value);
-    if(!(n>0)){ toast('Entre ton salaire net par mois.'); return; }
-    state.net=n; if(h>0) state.hours=h; onbClose();
-  });
-  $('onbSkip').addEventListener('click',onbClose);
 
   state=load();
   renderCats();
+  renderQuick();
   renderAll();
   show('calc');
-  if(!state.onboarded){ $('onb').style.display='block'; }
 })();
 
 (function(){
