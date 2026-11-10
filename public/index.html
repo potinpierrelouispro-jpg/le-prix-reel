@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Prix Réel">
-<meta name="app-version" content="2026-11-10-1810">
+<meta name="app-version" content="2026-11-10-1830">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -334,6 +334,7 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
       <div class="card">
         <h2>À propos</h2>
         <p class="help" style="margin-top:0">Le Prix Réel ne juge pas tes achats. Il traduit un prix en temps de travail, et c'est toi qui décides. Tes données restent sur ton appareil.</p>
+        <p class="help" id="ver"></p>
       </div>
     </section>
   </main>
@@ -653,6 +654,7 @@ $('wishCard').hidden=!state.wishes.length; if(!state.wishes.length){ box.innerHT
   })();
 
   state=load();
+  try{ $('ver').textContent='Version : '+document.querySelector('meta[name=app-version]').content; }catch(e){}
   renderCats();
   renderQuick();
   renderAll();
