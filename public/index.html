@@ -2,20 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le Temps Réel</title>
-<meta name="theme-color" content="#2b3ff0">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
 <meta name="description" content="Une pause pour te réinitialiser la tête : respirer, vider ses pensées, se concentrer.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Temps Réel">
-<meta name="app-version" content="2026-11-10-2030">
+<meta name="app-version" content="2026-11-10-2100">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
    Ton volontairement neutre : pas de rouge/vert, un seul accent bleu. */
@@ -194,6 +192,65 @@ details.tip p{margin:8px 0 0;color:var(--mute);font-size:14px}
 .sos-big .t{font:800 24px/1.1 var(--display)}
 .sos-big .s{font-size:14px;opacity:.9}
 .sos-big:active{transform:scale(.985)}
+
+/* ===== Style iOS : police système, listes groupées, couleurs système ===== */
+:root{
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --bg:#f2f2f7; --card:#ffffff; --ink:#000000; --mute:#6c6c70; --line:rgba(60,60,67,.16);
+  --accent:#007aff; --accent-ink:#ffffff; --accent-soft:rgba(0,122,255,.12); --bar:#007aff; --bar-bg:rgba(120,120,128,.16);
+  --glow:rgba(0,122,255,.08); --glow2:transparent; --dot:transparent; --bg-top:#f2f2f7; --fill:rgba(120,120,128,.12);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --card:#1c1c1e; --ink:#ffffff; --mute:#98989f; --line:rgba(84,84,88,.55);
+    --accent:#0a84ff; --accent-ink:#ffffff; --accent-soft:rgba(10,132,255,.2); --bar:#0a84ff; --bar-bg:rgba(120,120,128,.32);
+    --glow:rgba(10,132,255,.12); --glow2:transparent; --dot:transparent; --bg-top:#000000; --fill:rgba(120,120,128,.24);
+  }
+}
+html,body{overscroll-behavior-y:none;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);background-attachment:scroll;font:17px/1.4 var(--body);letter-spacing:-.01em}
+button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+header{padding:calc(14px + env(safe-area-inset-top,0px)) 20px 6px;align-items:center}
+h1{font:700 32px/1.1 var(--display);letter-spacing:.3px}
+.card{border:0;border-radius:20px;box-shadow:none;padding:18px}
+h2{font:700 20px/1.2 var(--display);letter-spacing:-.2px}
+.tool .sub,.help{font-size:14px;color:var(--mute)}
+input[type=text],input[type=number],input[type=search]{background:var(--fill);border:0;border-radius:12px;font-size:17px;padding:13px 14px}
+label,.lbl{font-size:13px;font-weight:600;color:var(--mute);text-transform:none}
+.btn{border:0;background:var(--accent-soft);color:var(--accent);border-radius:14px;padding:15px 16px;font-weight:600;font-size:17px;transition:opacity .15s,transform .15s}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:transparent}
+.btn:active{opacity:.55;transform:scale(.99)}
+.chip{border:0;background:var(--fill);font-size:15px;padding:9px 14px}
+.chip[aria-pressed="true"]{background:var(--accent);color:#fff}
+.mini{color:var(--accent)}
+.moods button{border:0;background:var(--fill);border-radius:16px}
+.moods button[aria-pressed="true"]{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.tile{background:var(--fill);border-radius:14px}
+.tile .v,.tool .out b,.tool .val,.big,.step,.big2,.phase{font-weight:700!important}
+.tool .out{background:var(--accent-soft);border-radius:14px}
+.sos-big{background:linear-gradient(135deg,#0a84ff,#5e5ce6);border-radius:22px;box-shadow:0 14px 30px -14px rgba(10,132,255,.7)}
+.sos-big .t{font-weight:700}
+.sos-pill{background:var(--accent);color:#fff;box-shadow:none;font-weight:600}
+details.tip summary::after{content:'›';font-size:24px;line-height:18px;font-weight:400;color:var(--mute);transition:transform .25s}
+details.tip[open] summary::after{content:'›';transform:rotate(90deg)}
+details.trace2 summary::after,details.trace2[open] summary::after{content:''}
+nav{background:color-mix(in srgb,var(--card) 70%,transparent);border-color:color-mix(in srgb,var(--ink) 8%,transparent)}
+nav .thumb{background:rgba(120,120,128,.18);box-shadow:none}
+nav button{font-weight:600}
+nav button[aria-selected="true"]{color:var(--accent)}
+.bar .fill{background:var(--accent)}
+#installBar{background:var(--accent);border-radius:22px}
+#installBar .go{color:var(--accent)}
+#pause,#sheet{inset:12px 0 0 0;border-radius:28px 28px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.28)}
+#pause.on,#sheet.on{animation:sheetUp .42s cubic-bezier(.32,.72,0,1)}
+#pause::before,#sheet::before{content:'';position:absolute;top:8px;left:50%;width:36px;height:5px;margin-left:-18px;border-radius:3px;background:rgba(120,120,128,.4)}
+#pause .x,#sheet .x{border:0;background:var(--fill);color:var(--mute)}
+#sheet textarea{background:var(--fill);border:0;border-radius:16px}
+.orb{background:radial-gradient(circle at 35% 30%,#fff 0%,var(--accent) 72%)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){#pause.on,#sheet.on{animation:none}}
 </style>
 </head>
 <body>
