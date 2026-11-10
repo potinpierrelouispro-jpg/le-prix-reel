@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Prix Réel</title>
+<meta name="theme-color" content="#2b3ff0">
+<meta name="description" content="Vois ce que tes achats coûtent en heures de travail.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prix Réel">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout : appli mobile en colonne unique (max 480 px), grand chiffre en haut, barre d'onglets en bas.
+   Ton volontairement neutre : pas de rouge/vert, un seul accent bleu. */
+:root{
+  --bg:#f3f5f8; --card:#ffffff; --ink:#14202b; --mute:#5b6875; --line:#dde3ea;
+  --accent:#2b3ff0; --accent-ink:#ffffff; --accent-soft:#e8ebff; --bar:#2b3ff0; --bar-bg:#e6eaf0;
+  --display:"Bricolage Grotesque","Arial Narrow",Arial,sans-serif;
+  --body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1620; --card:#18222e; --ink:#eef2f6; --mute:#9aa8b6; --line:#2a3644;
+    --accent:#8c98ff; --accent-ink:#0f1620; --accent-soft:#232c55; --bar:#8c98ff; --bar-bg:#263241;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --card:#18222e; --ink:#eef2f6; --mute:#9aa8b6; --line:#2a3644;
+  --accent:#8c98ff; --accent-ink:#0f1620; --accent-soft:#232c55; --bar:#8c98ff; --bar-bg:#263241;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+header{padding:18px 16px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h1{font:800 22px/1 var(--display);margin:0;letter-spacing:-.01em}
+.rate{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+main{flex:1;overflow-y:auto;padding:8px 16px 20px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:6px}
+input[type=text],input[type=number],input[type=search]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:18px;font-variant-numeric:tabular-nums}
+.amount{font:800 34px/1.1 var(--display);padding:10px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 12px;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.result{background:var(--accent-soft);border-color:transparent;text-align:left}
+.result .small{font-size:14px;color:var(--mute);margin:0}
+.big{font:800 52px/1.05 var(--display);letter-spacing:-.02em;margin:4px 0;font-variant-numeric:tabular-nums}
+.eq{margin:0;font-size:15px}
+.actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font-weight:600;cursor:pointer;text-align:center}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn:active{transform:scale(.98)}
+.help{font-size:13px;color:var(--mute);margin:10px 0 0}
+.help a{color:var(--accent)}
+h2{font:800 18px/1.2 var(--display);margin:0 0 10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .t{min-width:0}
+.row .t b{display:block;font-weight:600;overflow-wrap:anywhere}
+.row .t span{font-size:13px;color:var(--mute)}
+.row .n{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.mini{border:0;background:transparent;color:var(--accent);font-weight:600;padding:6px 8px;cursor:pointer;border-radius:8px}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar .top{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+.bar .track{height:10px;border-radius:99px;background:var(--bar-bg);overflow:hidden;margin-top:4px}
+.bar .fill{height:100%;background:var(--bar);border-radius:99px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--bg);border-radius:12px;padding:12px}
+.tile .v{font:800 26px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.tile .k{font-size:13px;color:var(--mute)}
+.empty{color:var(--mute);font-size:14px;margin:0}
+nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--card);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{border:0;background:transparent;padding:14px 4px;font-weight:600;color:var(--mute);cursor:pointer}
+nav button[aria-selected="true"]{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+.toast.on{opacity:1}
+.note{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);display:flex;gap:10px;align-items:center;justify-content:space-between}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Le Prix Réel</h1>
+    <div class="rate" id="rateTop"></div>
+  </header>
+
+  <main id="main">
+    <!-- Onglet Calculer -->
+    <section id="tab-calc" role="tabpanel" aria-labelledby="t-calc" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <label for="amount">Prix (en €)</label>
+        <input id="amount" class="amount" type="text" inputmode="decimal" autocomplete="off" value="80">
+        <div class="lbl" style="margin-top:14px">Catégorie</div>
+        <div class="chips" id="cats" role="group" aria-label="Catégorie"></div>
+        <label for="what" style="margin-top:14px">C'est pour quoi ? (facultatif)</label>
+        <input id="what" type="text" autocomplete="off" placeholder="Une veste, un resto, une sortie…">
+      </div>
+
+      <div class="card result" aria-live="polite">
+        <p class="small">Ça représente</p>
+        <div class="big" id="bigHours">—</div>
+        <p class="eq" id="eqText"></p>
+        <div class="actions">
+          <button class="btn primary" id="btnSpend" type="button">Je le dépense</button>
+          <button class="btn" id="btnWait" type="button">Me le rappeler dans 48 h</button>
+          <button class="btn ghost" id="btnSkip" type="button">Je laisse de côté</button>
+        </div>
+        <p class="help" id="gamingHelp" hidden>Besoin d'en parler ? Joueurs Info Service : <a href="tel:0974751313">09 74 75 13 13</a> (service national d'aide, appel non surtaxé).</p>
+      </div>
+
+      <div class="card" id="wishCard">
+        <h2>Mes envies en attente</h2>
+        <div id="wishList"></div>
+      </div>
+    </section>
+
+    <!-- Onglet Semaine -->
+    <section id="tab-week" role="tabpanel" aria-labelledby="t-week" hidden style="display:flex;flex-direction:column;gap:14px">
+      <div class="note" id="exampleNote">
+        <span>Ces dépenses sont des exemples. Remplace-les par les tiennes.</span>
+        <button class="mini" id="clearExamples" type="button">Effacer</button>
+      </div>
+      <div class="card">
+        <h2>Les 7 derniers jours</h2>
+        <div class="tiles">
+          <div class="tile"><div class="v" id="wkTotal">0 h</div><div class="k">de travail dépensées</div></div>
+          <div class="tile"><div class="v" id="wkKept">0 h</div><div class="k">laissées de côté</div></div>
+        </div>
+        <p class="help" id="wkDays"></p>
+      </div>
+      <div class="card">
+        <h2>Où part ton temps de travail</h2>
+        <div class="bars" id="bars"></div>
+      </div>
+      <div class="card">
+        <h2>Dernières dépenses</h2>
+        <div id="logList"></div>
+      </div>
+    </section>
+
+    <!-- Onglet Réglages -->
+    <section id="tab-set" role="tabpanel" aria-labelledby="t-set" hidden style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <h2>Ce que vaut ton heure</h2>
+        <label for="net">Salaire net par mois (€)</label>
+        <input id="net" type="text" inputmode="decimal" autocomplete="off">
+        <label for="hrs" style="margin-top:14px">Heures travaillées par mois</label>
+        <input id="hrs" type="text" inputmode="decimal" autocomplete="off">
+        <p class="help">Pour 35 h par semaine, c'est environ 152 h par mois. Compte seulement le temps en entreprise : le chiffre est plus juste.</p>
+        <p class="eq" style="margin-top:12px"><b id="rateBig"></b></p>
+      </div>
+      <div class="card">
+        <h2>Installer et partager</h2>
+        <p class="help" style="margin-top:0"><b>iPhone</b> : ouvre le lien dans Safari, touche Partager, puis « Sur l'écran d'accueil ».<br><b>Android</b> : menu du navigateur, puis « Installer l'application ».</p>
+        <button class="btn primary" id="btnShare" type="button" style="width:100%;margin-top:12px">Partager l'appli</button>
+      </div>
+      <div class="card">
+        <h2>À propos</h2>
+        <p class="help" style="margin-top:0">Le Prix Réel ne juge pas tes achats. Il traduit un prix en temps de travail, et c'est toi qui décides. Tes données restent sur ton appareil.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav role="tablist" aria-label="Sections">
+    <button id="t-calc" role="tab" aria-selected="true" data-tab="calc" type="button">Calculer</button>
+    <button id="t-week" role="tab" aria-selected="false" data-tab="week" type="button">Ma semaine</button>
+    <button id="t-set" role="tab" aria-selected="false" data-tab="set" type="button">Réglages</button>
+  </nav>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+(function(){
+  var KEY='prixreel.v1', DAY=86400000, WORKDAY=7;
+  var CATS=['Essentiel','Plaisir','Vêtements & beauté','Sorties','Jeux d\'argent','Autre'];
+  var state=null, cat='Plaisir';
+
+  function seed(){
+    var n=Date.now();
+    return {net:1000,hours:151.67,
+      log:[
+        {id:1,label:'Une veste',cat:'Vêtements & beauté',amt:79,t:n-1*DAY,ex:1},
+        {id:2,label:'Resto entre amis',cat:'Sorties',amt:32,t:n-2*DAY,ex:1},
+        {id:3,label:'Courses de la semaine',cat:'Essentiel',amt:48,t:n-3*DAY,ex:1},
+        {id:4,label:'Maquillage',cat:'Vêtements & beauté',amt:24,t:n-4*DAY,ex:1},
+        {id:5,label:'Abonnement streaming',cat:'Plaisir',amt:13,t:n-5*DAY,ex:1}
+      ],
+      kept:[{id:6,label:'Baskets',cat:'Vêtements & beauté',amt:110,t:n-2*DAY,ex:1}],
+      wishes:[{id:7,label:'Casque audio',cat:'Plaisir',amt:129,due:n+30*3600000,ex:1}]};
+  }
+  function load(){
+    try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); if(o&&o.log) return o;}}catch(e){}
+    return seed();
+  }
+  function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
+
+  function num(v){ var x=parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(x)?x:NaN; }
+  function rate(){ return state.hours>0 ? state.net/state.hours : 0; }
+  function euro(x){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(x); }
+  function fmtH(h){
+    var m=Math.round(h*60), hh=Math.floor(m/60), mm=m%60;
+    if(hh===0) return mm+' min';
+    return hh+' h '+(mm<10?'0':'')+mm;
+  }
+  function fmtShort(h){ return h>=10 ? Math.round(h)+' h' : (Math.round(h*10)/10).toString().replace('.',',')+' h'; }
+  function toHours(amt){ var r=rate(); return r>0 ? amt/r : 0; }
+  function eqText(h){
+    var d=h/WORKDAY;
+    if(d>=1){ var s=(Math.round(d*10)/10).toString().replace('.',','); return '≈ '+s+(d>=2?' jours':' jour')+' de travail ('+WORKDAY+' h par jour)'; }
+    return '≈ '+Math.max(1,Math.round(d*100))+' % d\'une journée de travail';
+  }
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var toastTimer;
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('on');},2200); }
+  function uid(){ return Date.now()+Math.floor(Math.random()*1000); }
+
+  /* ---- Calculer ---- */
+  function renderCats(){
+    var box=$('cats'); box.innerHTML='';
+    CATS.forEach(function(c){
+      var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=c;
+      b.setAttribute('aria-pressed', c===cat?'true':'false');
+      b.addEventListener('click',function(){ cat=c; renderCats(); renderResult(); });
+      box.appendChild(b);
+    });
+  }
+  function renderResult(){
+    var a=num($('amount').value), ok=a>0 && rate()>0;
+    $('bigHours').textContent = ok ? fmtH(toHours(a)) : '—';
+    $('eqText').textContent = ok ? eqText(toHours(a)) : (rate()>0 ? 'Entre un prix pour voir ce que ça représente.' : 'Renseigne ton salaire dans Réglages.');
+    ['btnSpend','btnWait','btnSkip'].forEach(function(id){ $(id).disabled=!ok; $(id).style.opacity=ok?1:.5; });
+    $('gamingHelp').hidden = cat!=='Jeux d\'argent';
+  }
+  function currentItem(){
+    var a=num($('amount').value), w=$('what').value.trim();
+    return {id:uid(),label:w||cat,cat:cat,amt:a};
+  }
+  function afterAdd(msg){ $('what').value=''; save(); renderAll(); toast(msg); }
+
+  $('amount').addEventListener('input',renderResult);
+  $('btnSpend').addEventListener('click',function(){
+    var it=currentItem(); if(!(it.amt>0)) return; it.t=Date.now(); state.log.unshift(it);
+    afterAdd('Ajouté à ta semaine : '+fmtH(toHours(it.amt))+' de travail.');
+  });
+  $('btnWait').addEventListener('click',function(){
+    var it=currentItem(); if(!(it.amt>0)) return; it.due=Date.now()+2*DAY; state.wishes.unshift(it);
+    afterAdd('Rappel dans 48 h. Tu décideras à ce moment-là.');
+  });
+  $('btnSkip').addEventListener('click',function(){
+    var it=currentItem(); if(!(it.amt>0)) return; it.t=Date.now(); state.kept.unshift(it);
+    afterAdd(fmtH(toHours(it.amt))+' de travail gardées.');
+  });
+
+  function renderWishes(){
+    var box=$('wishList'), now=Date.now();
+    if(!state.wishes.length){ box.innerHTML='<p class="empty">Rien en attente. Utilise « Me le rappeler dans 48 h » avant un achat.</p>'; return; }
+    box.innerHTML='';
+    state.wishes.forEach(function(w){
+      var rem=w.due-now, status = rem<=0 ? 'Prêt à décider' : 'Dans '+Math.ceil(rem/3600000)+' h';
+      var row=document.createElement('div'); row.className='row'; row.style.flexWrap='wrap';
+      row.innerHTML='<div class="t"><b>'+esc(w.label)+'</b><span>'+euro(w.amt)+' · '+fmtH(toHours(w.amt))+' · '+status+'</span></div>'+
+        '<div><button class="mini" data-a="buy" type="button">Je l\'achète</button><button class="mini" data-a="drop" type="button">Plus envie</button></div>';
+      row.querySelector('[data-a=buy]').addEventListener('click',function(){
+        state.wishes=state.wishes.filter(function(x){return x.id!==w.id;});
+        state.log.unshift({id:uid(),label:w.label,cat:w.cat,amt:w.amt,t:Date.now()});
+        save(); renderAll(); toast('Ajouté à ta semaine.');
+      });
+      row.querySelector('[data-a=drop]').addEventListener('click',function(){
+        state.wishes=state.wishes.filter(function(x){return x.id!==w.id;});
+        state.kept.unshift({id:uid(),label:w.label,cat:w.cat,amt:w.amt,t:Date.now()});
+        save(); renderAll(); toast(fmtH(toHours(w.amt))+' de travail gardées.');
+      });
+      box.appendChild(row);
+    });
+  }
+
+  /* ---- Semaine ---- */
+  function renderWeek(){
+    var since=Date.now()-7*DAY;
+    var wk=state.log.filter(function(x){return x.t>=since;});
+    var kp=state.kept.filter(function(x){return x.t>=since;});
+    var total=wk.reduce(function(s,x){return s+toHours(x.amt);},0);
+    var kept=kp.reduce(function(s,x){return s+toHours(x.amt);},0);
+    $('wkTotal').textContent=fmtShort(total);
+    $('wkKept').textContent=fmtShort(kept);
+    $('wkDays').textContent = total>0 ? eqText(total) : '';
+    var by={}; CATS.forEach(function(c){by[c]=0;});
+    wk.forEach(function(x){ by[x.cat]=(by[x.cat]||0)+toHours(x.amt); });
+    var max=Math.max.apply(null,CATS.map(function(c){return by[c];}).concat([0.0001]));
+    var bars=$('bars'); bars.innerHTML='';
+    var any=false;
+    CATS.forEach(function(c){
+      if(by[c]<=0) return; any=true;
+      var d=document.createElement('div'); d.className='bar';
+      d.innerHTML='<div class="top"><span>'+esc(c)+'</span><span>'+fmtH(by[c])+'</span></div><div class="track"><div class="fill" style="width:'+Math.max(3,by[c]/max*100)+'%"></div></div>';
+      bars.appendChild(d);
+    });
+    if(!any) bars.innerHTML='<p class="empty">Aucune dépense sur les 7 derniers jours.</p>';
+    var list=$('logList'); list.innerHTML='';
+    if(!state.log.length){ list.innerHTML='<p class="empty">Rien pour l\'instant.</p>'; }
+    state.log.slice(0,8).forEach(function(x){
+      var row=document.createElement('div'); row.className='row';
+      row.innerHTML='<div class="t"><b>'+esc(x.label)+'</b><span>'+esc(x.cat)+' · '+euro(x.amt)+'</span></div><div class="n">'+fmtH(toHours(x.amt))+'</div><button class="mini" type="button" aria-label="Retirer '+esc(x.label)+'">Retirer</button>';
+      row.querySelector('button').addEventListener('click',function(){
+        state.log=state.log.filter(function(y){return y.id!==x.id;}); save(); renderAll();
+      });
+      list.appendChild(row);
+    });
+    var hasEx=state.log.concat(state.kept,state.wishes).some(function(x){return x.ex;});
+    $('exampleNote').hidden=!hasEx;
+  }
+  $('clearExamples').addEventListener('click',function(){
+    function f(a){return a.filter(function(x){return !x.ex;});}
+    state.log=f(state.log); state.kept=f(state.kept); state.wishes=f(state.wishes);
+    save(); renderAll(); toast('Exemples effacés.');
+  });
+
+  /* ---- Réglages ---- */
+  function renderSettings(){
+    var r=rate();
+    $('rateTop').textContent = r>0 ? 'Ton heure : '+euro(r) : '';
+    $('rateBig').textContent = r>0 ? 'Ton heure de travail vaut '+euro(r)+'.' : 'Renseigne ton salaire et tes heures.';
+  }
+  $('net').value=''; $('hrs').value='';
+  function bindSetting(id,key){
+    $(id).addEventListener('input',function(){
+      var v=num($(id).value); if(v>0){ state[key]=v; save(); renderAll(true); }
+    });
+  }
+  bindSetting('net','net'); bindSetting('hrs','hours');
+
+  function renderAll(keepInputs){
+    renderSettings(); renderResult(); renderWishes(); renderWeek();
+    if(!keepInputs){ $('net').value=String(state.net).replace('.',','); $('hrs').value=String(state.hours).replace('.',','); }
+  }
+
+  /* ---- Onglets ---- */
+  var tabs=document.querySelectorAll('nav [role=tab]');
+  function show(name){
+    ['calc','week','set'].forEach(function(n){
+      var p=$('tab-'+n), on=n===name; p.hidden=!on; p.style.display=on?'flex':'none';
+    });
+    tabs.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab===name?'true':'false'); });
+    $('main').scrollTop=0;
+  }
+  tabs.forEach(function(b){ b.addEventListener('click',function(){ show(b.dataset.tab); }); });
+
+  $('btnShare').addEventListener('click',function(){
+    var url=location.href.split('#')[0], data={title:'Le Prix Réel',text:'Vois ce que tes achats coûtent en heures de travail.',url:url};
+    function copy(){
+      try{ navigator.clipboard.writeText(url).then(function(){toast('Lien copié.');},function(){toast(url);}); }
+      catch(e){ toast(url); }
+    }
+    try{ if(navigator.share){ navigator.share(data).catch(function(){}); } else { copy(); } }
+    catch(e){ copy(); }
+  });
+
+  state=load();
+  renderCats();
+  renderAll();
+  show('calc');
+})();
+</script>
+</body>
+</html>
